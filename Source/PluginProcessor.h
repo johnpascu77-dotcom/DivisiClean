@@ -1,0 +1,136 @@
+/*
+  ==============================================================================
+
+    This file contains the basic framework code for a JUCE plugin processor.
+
+  ==============================================================================
+*/
+
+#pragma once
+
+#include <JuceHeader.h>
+#include <array>
+#include <vector>
+#include <algorithm>
+
+//==============================================================================
+/**
+*/
+enum class ProfileType
+{
+    PassThrough,
+    SingleSource,
+    SectionPoly,
+    BlockVoicing
+};
+
+enum class SourceSelectionMode
+{
+    Highest,
+    Lowest,
+    ClosestToTarget
+};
+
+struct PresetProfile
+{
+    int cc31 = -1;
+    juce::String name = "Unknown / Pass-through";
+
+    ProfileType type = ProfileType::PassThrough;
+    SourceSelectionMode selectionMode = SourceSelectionMode::Highest;
+
+    int maxVoices = 16;
+    int minNote = 0;
+    int maxNote = 127;
+    int targetNote = 60;
+
+    bool useChordWindow = false;
+    double chordWindowMs = 0.0;
+    bool enforceActiveVoiceLimit = false;
+};
+
+class DivisiCleanAudioProcessor  : public juce::AudioProcessor
+{
+public:
+    //==============================================================================
+    DivisiCleanAudioProcessor();
+    ~DivisiCleanAudioProcessor() override;
+
+    //==============================================================================
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
+
+   #ifndef JucePlugin_PreferredChannelConfigurations
+    bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
+   #endif
+
+    void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+
+    //==============================================================================
+    juce::AudioProcessorEditor* createEditor() override;
+    bool hasEditor() const override;
+
+    //==============================================================================
+    const juce::String getName() const override;
+
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
+    bool isMidiEffect() const override;
+    double getTailLengthSeconds() const override;
+
+    //==============================================================================
+    int getNumPrograms() override;
+    int getCurrentProgram() override;
+    void setCurrentProgram (int index) override;
+    const juce::String getProgramName (int index) override;
+    void changeProgramName (int index, const juce::String& newName) override;
+
+    //==============================================================================
+    void getStateInformation (juce::MemoryBlock& destData) override;
+    void setStateInformation (const void* data, int sizeInBytes) override;
+
+    //==============================================================================
+    int getActiveCC31() const;
+    juce::String getActiveProfileName() const;
+
+private:
+    //==============================================================================
+    struct PendingNote
+    {
+        int channel = 1;
+        int noteNumber = 0;
+        int velocity = 0;
+        double ageMs = 0.0;
+    };
+
+    std::vector<PendingNote> pendingNotes;
+
+    double samplesToMs(int numSamples) const;
+    void flushPendingNotesIfReady(juce::MidiBuffer& outputMidi);
+    void flushPendingNotesNow(juce::MidiBuffer& outputMidi);
+
+    std::atomic<int> activeCC31{ -1 };
+
+    // Maps input notes to transformed output notes.
+    // Index = (channel - 1) * 128 + inputNote.
+    // Value:
+    //   -1 = no mapping
+    //   -2 = note-on was ignored/suppressed
+    // 0-127 = output note number
+    std::array<int, 16 * 128> activeNoteMap;
+
+    PresetProfile getProfileForCC31(int cc31) const;
+    juce::String getProfileNameForCC31(int cc31) const;
+
+    int getNoteMapIndex(int channel, int noteNumber) const;
+    int wrapNoteNearTarget(int inputNote, int minNote, int maxNote, int targetNote) const;
+
+    int chooseSingleSourceIndexFromNotes(const std::vector<int>& noteNumbers,
+        const PresetProfile& profile) const;
+
+    std::vector<int> chooseBlockVoicingIndicesFromNotes(const std::vector<int>& noteNumbers,
+        const PresetProfile& profile) const;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DivisiCleanAudioProcessor)
+
+};
