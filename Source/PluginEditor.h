@@ -21,6 +21,9 @@ private:
     juce::Label titleLabel;
     juce::Label cc31Label;
     juce::Label profileLabel;
+    juce::Label typeLabel;
+    juce::Label settingsLabel;
+    juce::Label pendingLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DivisiCleanAudioProcessorEditor)
 };

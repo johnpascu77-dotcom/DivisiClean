@@ -93,6 +93,13 @@ public:
     int getActiveCC31() const;
     juce::String getActiveProfileName() const;
 
+    juce::String getActiveProfileTypeName() const;
+    int getActiveProfileMaxVoices() const;
+    double getActiveProfileChordWindowMs() const;
+    bool getActiveProfileUsesChordWindow() const;
+    bool getActiveProfileEnforcesActiveVoiceLimit() const;
+    int getPendingNoteCount() const;
+
 private:
     //==============================================================================
     struct PendingNote

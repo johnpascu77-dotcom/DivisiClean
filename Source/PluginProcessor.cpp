@@ -408,6 +408,58 @@ juce::String DivisiCleanAudioProcessor::getActiveProfileName() const
     return getProfileNameForCC31(activeCC31.load());
 }
 
+juce::String DivisiCleanAudioProcessor::getActiveProfileTypeName() const
+{
+    const auto profile = getProfileForCC31(activeCC31.load());
+
+    switch (profile.type)
+    {
+    case ProfileType::PassThrough:
+        return "PassThrough";
+
+    case ProfileType::SingleSource:
+        return "SingleSource";
+
+    case ProfileType::SectionPoly:
+        return "SectionPoly";
+
+    case ProfileType::BlockVoicing:
+        return "BlockVoicing";
+
+    default:
+        return "Unknown";
+    }
+}
+
+int DivisiCleanAudioProcessor::getActiveProfileMaxVoices() const
+{
+    const auto profile = getProfileForCC31(activeCC31.load());
+    return profile.maxVoices;
+}
+
+double DivisiCleanAudioProcessor::getActiveProfileChordWindowMs() const
+{
+    const auto profile = getProfileForCC31(activeCC31.load());
+    return profile.chordWindowMs;
+}
+
+bool DivisiCleanAudioProcessor::getActiveProfileUsesChordWindow() const
+{
+    const auto profile = getProfileForCC31(activeCC31.load());
+    return profile.useChordWindow;
+}
+
+bool DivisiCleanAudioProcessor::getActiveProfileEnforcesActiveVoiceLimit() const
+{
+    const auto profile = getProfileForCC31(activeCC31.load());
+    return profile.enforceActiveVoiceLimit;
+}
+
+int DivisiCleanAudioProcessor::getPendingNoteCount() const
+{
+    return static_cast<int>(pendingNotes.size());
+}
+
 PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
 {
     static const PresetProfile profiles[] =

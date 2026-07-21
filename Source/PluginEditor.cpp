@@ -4,7 +4,7 @@
 DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
-    setSize(420, 180);
+    setSize(520, 260);
 
     titleLabel.setText("DivisiClean", juce::dontSendNotification);
     titleLabel.setJustificationType(juce::Justification::centred);
@@ -20,6 +20,21 @@ DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudi
     profileLabel.setJustificationType(juce::Justification::centred);
     profileLabel.setFont(juce::FontOptions(16.0f));
     addAndMakeVisible(profileLabel);
+
+    typeLabel.setText("Type: -", juce::dontSendNotification);
+    typeLabel.setJustificationType(juce::Justification::centred);
+    typeLabel.setFont(juce::FontOptions(15.0f));
+    addAndMakeVisible(typeLabel);
+
+    settingsLabel.setText("Max voices: - | Window: - | Cap: -", juce::dontSendNotification);
+    settingsLabel.setJustificationType(juce::Justification::centred);
+    settingsLabel.setFont(juce::FontOptions(15.0f));
+    addAndMakeVisible(settingsLabel);
+
+    pendingLabel.setText("Pending notes: 0", juce::dontSendNotification);
+    pendingLabel.setJustificationType(juce::Justification::centred);
+    pendingLabel.setFont(juce::FontOptions(15.0f));
+    addAndMakeVisible(pendingLabel);
 
     startTimerHz(10);
 }
@@ -52,11 +67,14 @@ void DivisiCleanAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds().reduced(30);
 
-    titleLabel.setBounds(area.removeFromTop(45));
-    area.removeFromTop(10);
+    titleLabel.setBounds(area.removeFromTop(42));
+    area.removeFromTop(8);
 
-    cc31Label.setBounds(area.removeFromTop(35));
-    profileLabel.setBounds(area.removeFromTop(35));
+    cc31Label.setBounds(area.removeFromTop(30));
+    profileLabel.setBounds(area.removeFromTop(28));
+    typeLabel.setBounds(area.removeFromTop(26));
+    settingsLabel.setBounds(area.removeFromTop(26));
+    pendingLabel.setBounds(area.removeFromTop(26));
 }
 
 void DivisiCleanAudioProcessorEditor::timerCallback()
@@ -70,4 +88,29 @@ void DivisiCleanAudioProcessorEditor::timerCallback()
 
     profileLabel.setText("Profile: " + audioProcessor.getActiveProfileName(),
         juce::dontSendNotification);
+
+    typeLabel.setText("Type: " + audioProcessor.getActiveProfileTypeName(),
+        juce::dontSendNotification);
+
+    const bool usesWindow = audioProcessor.getActiveProfileUsesChordWindow();
+    const bool usesCap = audioProcessor.getActiveProfileEnforcesActiveVoiceLimit();
+
+    juce::String windowText;
+
+    if (usesWindow)
+        windowText = juce::String(audioProcessor.getActiveProfileChordWindowMs(), 0) + " ms";
+    else
+        windowText = "OFF";
+
+    settingsLabel.setText(
+        "Max voices: " + juce::String(audioProcessor.getActiveProfileMaxVoices())
+        + " | Window: " + windowText
+        + " | Cap: " + juce::String(usesCap ? "ON" : "OFF"),
+        juce::dontSendNotification
+    );
+
+    pendingLabel.setText(
+        "Pending notes: " + juce::String(audioProcessor.getPendingNoteCount()),
+        juce::dontSendNotification
+    );
 }
