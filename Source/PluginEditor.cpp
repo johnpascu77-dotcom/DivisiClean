@@ -4,7 +4,7 @@
 DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
-    setSize(560, 340);
+    setSize(560, 365);
 
     titleLabel.setText("DivisiClean", juce::dontSendNotification);
     titleLabel.setJustificationType(juce::Justification::centred);
@@ -50,6 +50,10 @@ DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudi
     pendingLabel.setJustificationType(juce::Justification::centred);
     pendingLabel.setFont(juce::FontOptions(15.0f));
     addAndMakeVisible(pendingLabel);
+    jsonStatusLabel.setText("JSON: -", juce::dontSendNotification);
+    jsonStatusLabel.setJustificationType(juce::Justification::centred);
+    jsonStatusLabel.setFont(juce::FontOptions(13.0f));
+    addAndMakeVisible(jsonStatusLabel);
 
     startTimerHz(10);
 }
@@ -93,6 +97,7 @@ void DivisiCleanAudioProcessorEditor::resized()
     wrapModeLabel.setBounds(area.removeFromTop(26));
     settingsLabel.setBounds(area.removeFromTop(26));
     pendingLabel.setBounds(area.removeFromTop(26));
+    jsonStatusLabel.setBounds(area.removeFromTop(24));
 }
 
 void DivisiCleanAudioProcessorEditor::timerCallback()
@@ -138,6 +143,11 @@ void DivisiCleanAudioProcessorEditor::timerCallback()
 
     pendingLabel.setText(
         "Pending notes: " + juce::String(audioProcessor.getPendingNoteCount()),
+        juce::dontSendNotification
+    );
+
+    jsonStatusLabel.setText(
+        "JSON: " + audioProcessor.getJsonProfileStatus(),
         juce::dontSendNotification
     );
 }

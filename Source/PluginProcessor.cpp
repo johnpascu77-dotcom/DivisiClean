@@ -23,10 +23,252 @@ DivisiCleanAudioProcessor::DivisiCleanAudioProcessor()
 #endif
 {
     activeNoteMap.fill(-1);
+    loadJsonProfiles();
 }
 
 DivisiCleanAudioProcessor::~DivisiCleanAudioProcessor()
 {
+}
+
+juce::File DivisiCleanAudioProcessor::getJsonProfilesFile() const
+{
+    return juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
+        .getChildFile("DivisiClean")
+        .getChildFile("DivisiCleanProfiles.json");
+}
+
+static juce::String normaliseEnumText(juce::String text)
+{
+    text = text.trim();
+    text = text.removeCharacters(" _-");
+    return text.toLowerCase();
+}
+
+ProfileType DivisiCleanAudioProcessor::profileTypeFromString(const juce::String& text) const
+{
+    const auto t = normaliseEnumText(text);
+
+    if (t == "singlesource")
+        return ProfileType::SingleSource;
+
+    if (t == "sectionpoly")
+        return ProfileType::SectionPoly;
+
+    if (t == "blockvoicing")
+        return ProfileType::BlockVoicing;
+
+    return ProfileType::PassThrough;
+}
+
+SourceSelectionMode DivisiCleanAudioProcessor::sourceSelectionModeFromString(const juce::String& text) const
+{
+    const auto t = normaliseEnumText(text);
+
+    if (t == "lowest")
+        return SourceSelectionMode::Lowest;
+
+    if (t == "closesttotarget")
+        return SourceSelectionMode::ClosestToTarget;
+
+    return SourceSelectionMode::Highest;
+}
+
+SourceReductionMode DivisiCleanAudioProcessor::sourceReductionModeFromString(const juce::String& text) const
+{
+    const auto t = normaliseEnumText(text);
+
+    if (t == "lowestn")
+        return SourceReductionMode::LowestN;
+
+    if (t == "highestn")
+        return SourceReductionMode::HighestN;
+
+    if (t == "spread")
+        return SourceReductionMode::Spread;
+
+    if (t == "closesttotarget")
+        return SourceReductionMode::ClosestToTarget;
+
+    if (t == "asplayed")
+        return SourceReductionMode::AsPlayed;
+
+    return SourceReductionMode::None;
+}
+
+ExpectedDivisiMode DivisiCleanAudioProcessor::expectedDivisiModeFromString(const juce::String& text) const
+{
+    const auto t = normaliseEnumText(text);
+
+    if (t == "bottomup")
+        return ExpectedDivisiMode::BottomUp;
+
+    if (t == "topdown")
+        return ExpectedDivisiMode::TopDown;
+
+    if (t == "fillvoices")
+        return ExpectedDivisiMode::FillVoices;
+
+    return ExpectedDivisiMode::None;
+}
+
+RegisterWrapMode DivisiCleanAudioProcessor::registerWrapModeFromString(const juce::String& text) const
+{
+    const auto t = normaliseEnumText(text);
+
+    if (t == "pervoicerange")
+        return RegisterWrapMode::PerVoiceRange;
+
+    return RegisterWrapMode::PerNoteNearTarget;
+}
+
+void DivisiCleanAudioProcessor::loadJsonProfiles()
+{
+    jsonProfiles.clear();
+    jsonProfilesLoaded = false;
+
+    const auto jsonFile = getJsonProfilesFile();
+
+    if (!jsonFile.existsAsFile())
+    {
+        jsonProfileStatus = "JSON file not found, using built-in profiles";
+        return;
+    }
+
+    const auto jsonText = jsonFile.loadFileAsString();
+
+    if (jsonText.trim().isEmpty())
+    {
+        jsonProfileStatus = "JSON file is empty, using built-in profiles";
+        return;
+    }
+
+    juce::var parsedJson;
+    const auto parseResult = juce::JSON::parse(jsonText, parsedJson);
+
+    if (parseResult.failed())
+    {
+        jsonProfileStatus = "JSON parse failed: " + parseResult.getErrorMessage();
+        return;
+    }
+
+    if (!parsedJson.isObject())
+    {
+        jsonProfileStatus = "JSON root is not an object, using built-in profiles";
+        return;
+    }
+
+    const auto* root = parsedJson.getDynamicObject();
+
+    if (root == nullptr)
+    {
+        jsonProfileStatus = "JSON root object invalid, using built-in profiles";
+        return;
+    }
+
+    const auto profilesVar = root->getProperty("profiles");
+
+    if (!profilesVar.isArray())
+    {
+        jsonProfileStatus = "JSON profiles field missing or not an array";
+        return;
+    }
+
+    const auto* profilesArray = profilesVar.getArray();
+
+    if (profilesArray == nullptr || profilesArray->isEmpty())
+    {
+        jsonProfileStatus = "JSON profiles array is empty, using built-in profiles";
+        return;
+    }
+
+    std::vector<PresetProfile> loadedProfiles;
+    loadedProfiles.reserve(static_cast<size_t>(profilesArray->size()));
+
+    for (const auto& profileVar : *profilesArray)
+    {
+        if (!profileVar.isObject())
+            continue;
+
+        const auto* profileObject = profileVar.getDynamicObject();
+
+        if (profileObject == nullptr)
+            continue;
+
+        PresetProfile profile;
+
+        profile.cc31 = static_cast<int>(profileObject->getProperty("cc31"));
+        profile.name = profileObject->getProperty("name").toString();
+
+        profile.type = profileTypeFromString(profileObject->getProperty("profileType").toString());
+        profile.selectionMode = sourceSelectionModeFromString(profileObject->getProperty("sourceSelectionMode").toString());
+        profile.reductionMode = sourceReductionModeFromString(profileObject->getProperty("sourceReductionMode").toString());
+        profile.expectedDivisiMode = expectedDivisiModeFromString(profileObject->getProperty("expectedDivisiMode").toString());
+        profile.registerWrapMode = registerWrapModeFromString(profileObject->getProperty("registerWrapMode").toString());
+
+        profile.maxVoices = static_cast<int>(profileObject->getProperty("maxVoices"));
+        profile.minNote = static_cast<int>(profileObject->getProperty("minNote"));
+        profile.maxNote = static_cast<int>(profileObject->getProperty("maxNote"));
+        profile.targetNote = static_cast<int>(profileObject->getProperty("targetNote"));
+
+        profile.useChordWindow = static_cast<bool>(profileObject->getProperty("useChordWindow"));
+        profile.chordWindowMs = static_cast<double>(profileObject->getProperty("chordWindowMs"));
+        profile.enforceActiveVoiceLimit = static_cast<bool>(profileObject->getProperty("enforceActiveVoiceLimit"));
+
+        profile.voiceSourceRanges.clear();
+
+        const auto voiceRangesVar = profileObject->getProperty("voiceSourceRanges");
+
+        if (voiceRangesVar.isArray())
+        {
+            const auto* voiceRangesArray = voiceRangesVar.getArray();
+
+            if (voiceRangesArray != nullptr)
+            {
+                for (const auto& rangeVar : *voiceRangesArray)
+                {
+                    if (!rangeVar.isObject())
+                        continue;
+
+                    const auto* rangeObject = rangeVar.getDynamicObject();
+
+                    if (rangeObject == nullptr)
+                        continue;
+
+                    VoiceSourceRange range;
+
+                    range.rank = static_cast<int>(rangeObject->getProperty("rank"));
+                    range.minNote = static_cast<int>(rangeObject->getProperty("minNote"));
+                    range.maxNote = static_cast<int>(rangeObject->getProperty("maxNote"));
+                    range.targetNote = static_cast<int>(rangeObject->getProperty("targetNote"));
+                    range.outputTranspose = static_cast<int>(rangeObject->getProperty("outputTranspose"));
+
+                    profile.voiceSourceRanges.push_back(range);
+                }
+            }
+        }
+
+        if (profile.cc31 >= 0)
+            loadedProfiles.push_back(profile);
+    }
+
+    if (loadedProfiles.empty())
+    {
+        jsonProfileStatus = "No valid JSON profiles loaded, using built-in profiles";
+        return;
+    }
+
+    jsonProfiles = loadedProfiles;
+    jsonProfilesLoaded = true;
+
+    jsonProfileStatus = "Loaded "
+        + juce::String(static_cast<int>(jsonProfiles.size()))
+        + " JSON profiles from "
+        + jsonFile.getFileName();
+}
+
+juce::String DivisiCleanAudioProcessor::getJsonProfileStatus() const
+{
+    return jsonProfileStatus;
 }
 
 //==============================================================================
@@ -511,21 +753,15 @@ VoiceSourceRange DivisiCleanAudioProcessor::getVoiceSourceRangeForProfileRank(
     int rank,
     int totalRanks) const
 {
-    if (profile.cc31 == 80
-        && profile.registerWrapMode == RegisterWrapMode::PerVoiceRange
-        && totalRanks == 3)
+    juce::ignoreUnused(totalRanks);
+
+    for (const auto& range : profile.voiceSourceRanges)
     {
-        if (rank == 0)
-            return { 40, 60, 48 };
-
-        if (rank == 1)
-            return { 55, 67, 60 };
-
-        if (rank == 2)
-            return { 60, 79, 67 };
+        if (range.rank == rank)
+            return range;
     }
 
-    return { profile.minNote, profile.maxNote, profile.targetNote };
+    return { rank, profile.minNote, profile.maxNote, profile.targetNote, 0 };
 }
 
 int DivisiCleanAudioProcessor::getActiveProfileMaxVoices() const
@@ -559,13 +795,22 @@ int DivisiCleanAudioProcessor::getPendingNoteCount() const
 
 PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
 {
+    if (jsonProfilesLoaded)
+    {
+        for (const auto& profile : jsonProfiles)
+        {
+            if (profile.cc31 == cc31)
+                return profile;
+        }
+    }
+
+    return getHardcodedProfileForCC31(cc31);
+}
+
+PresetProfile DivisiCleanAudioProcessor::getHardcodedProfileForCC31(int cc31) const
+{
     static const PresetProfile profiles[] =
     {
-        // CC31 70:
-        // Divisimate preset: Vln1 + Vln2 + Vc 8va.
-        // SingleSource profile, top-line oriented.
-        // v0.5.3 uses chord collection and active cap
-        // to guarantee only one melodic/source note reaches Divisimate.
         {
             70,
             "Vln1 + Vln2 + Vc 8va",
@@ -580,15 +825,10 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
             72,
             true,
             250.0,
-            true
+            true,
+            {}
         },
 
-        // CC31 80:
-        // Divisimate preset: Strings open 02.
-        // Divisimate shows: Bottom Up, 3 voices.
-        // DivisiClean currently uses Spread source reduction:
-        // it preserves a representative contour from the generated chord,
-        // then wraps the selected notes into the preset target range.
         {
             80,
             "Strings open 02",
@@ -603,16 +843,14 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
             60,
             true,
             250.0,
-            true
+            true,
+            {
+                { 0, 40, 60, 48, 0 },
+                { 1, 55, 67, 60, 0 },
+                { 2, 60, 79, 67, 0 }
+            }
         },
 
-        // CC31 88:
-        // Divisimate preset: Tutti Bass Unison.
-        // SingleSource bass-oriented profile.
-        // Uses Highest source selection, then wraps the selected source into the low target range.
-        // Although this is a low-instrument preset, the source is intentionally
-        // selected from the highest generated note. The selected melodic source
-        // is then wrapped into the low target range for the Divisimate preset.
         {
             88,
             "Tutti Bass Unison",
@@ -627,7 +865,8 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
             43,
             true,
             250.0,
-            true
+            true,
+            {}
         }
     };
 
@@ -651,7 +890,8 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         60,
         false,
         0.0,
-        false
+        false,
+        {}
     };
 }
 
@@ -863,7 +1103,7 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
             }
             else
             {
-                range = { currentProfile.minNote, currentProfile.maxNote, currentProfile.targetNote };
+                range = { rank, currentProfile.minNote, currentProfile.maxNote, currentProfile.targetNote, 0 };
             }
 
             const int outputNote = wrapNoteNearTarget(inputNote,

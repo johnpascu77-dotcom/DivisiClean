@@ -57,9 +57,11 @@ enum class RegisterWrapMode
 
 struct VoiceSourceRange
 {
+    int rank = 0;
     int minNote = 0;
     int maxNote = 127;
     int targetNote = 60;
+    int outputTranspose = 0;
 };
 
 struct PresetProfile
@@ -80,6 +82,8 @@ struct PresetProfile
     bool useChordWindow = false;
     double chordWindowMs = 0.0;
     bool enforceActiveVoiceLimit = false;
+
+    std::vector<VoiceSourceRange> voiceSourceRanges;
 };
 
 class DivisiCleanAudioProcessor  : public juce::AudioProcessor
@@ -98,6 +102,9 @@ public:
    #endif
 
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+
+    void loadJsonProfiles();
+    juce::File getJsonProfilesFile() const;
 
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
@@ -130,6 +137,7 @@ public:
     juce::String getActiveSourceReductionModeName() const;
     juce::String getActiveExpectedDivisiModeName() const;
     juce::String getActiveRegisterWrapModeName() const;
+    juce::String getJsonProfileStatus() const;
     int getActiveProfileMaxVoices() const;
     double getActiveProfileChordWindowMs() const;
     bool getActiveProfileUsesChordWindow() const;
@@ -145,6 +153,10 @@ private:
         int velocity = 0;
         double ageMs = 0.0;
     };
+
+    std::vector<PresetProfile> jsonProfiles;
+    bool jsonProfilesLoaded = false;
+    juce::String jsonProfileStatus = "JSON profiles not loaded";
 
     std::vector<PendingNote> pendingNotes;
 
@@ -163,6 +175,7 @@ private:
     std::array<int, 16 * 128> activeNoteMap;
 
     PresetProfile getProfileForCC31(int cc31) const;
+    PresetProfile getHardcodedProfileForCC31(int cc31) const;
     juce::String getProfileNameForCC31(int cc31) const;
     juce::String registerWrapModeToString(RegisterWrapMode mode) const;
 
@@ -170,6 +183,12 @@ private:
     int wrapNoteNearTarget(int inputNote, int minNote, int maxNote, int targetNote) const;
     int chooseSingleSourceIndexFromNotes(const std::vector<int>& noteNumbers,
         const PresetProfile& profile) const;
+
+    ProfileType profileTypeFromString(const juce::String& text) const;
+    SourceSelectionMode sourceSelectionModeFromString(const juce::String& text) const;
+    SourceReductionMode sourceReductionModeFromString(const juce::String& text) const;
+    ExpectedDivisiMode expectedDivisiModeFromString(const juce::String& text) const;
+    RegisterWrapMode registerWrapModeFromString(const juce::String& text) const;
 
     VoiceSourceRange getVoiceSourceRangeForProfileRank(const PresetProfile& profile,
         int rank,

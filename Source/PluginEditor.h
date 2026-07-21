@@ -27,6 +27,7 @@ private:
     juce::Label wrapModeLabel;
     juce::Label settingsLabel;
     juce::Label pendingLabel;
+    juce::Label jsonStatusLabel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DivisiCleanAudioProcessorEditor)
 };
