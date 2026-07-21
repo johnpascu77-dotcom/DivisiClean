@@ -433,6 +433,29 @@ juce::String DivisiCleanAudioProcessor::getActiveProfileTypeName() const
     }
 }
 
+juce::String DivisiCleanAudioProcessor::getActiveExpectedDivisiModeName() const
+{
+    const auto profile = getProfileForCC31(activeCC31.load());
+
+    switch (profile.expectedDivisiMode)
+    {
+    case ExpectedDivisiMode::None:
+        return "None";
+
+    case ExpectedDivisiMode::BottomUp:
+        return "Bottom Up";
+
+    case ExpectedDivisiMode::TopDown:
+        return "Top Down";
+
+    case ExpectedDivisiMode::FillVoices:
+        return "Fill Voices";
+
+    default:
+        return "Unknown";
+    }
+}
+
 int DivisiCleanAudioProcessor::getActiveProfileMaxVoices() const
 {
     const auto profile = getProfileForCC31(activeCC31.load());
@@ -466,16 +489,17 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
 {
     static const PresetProfile profiles[] =
     {
-        {
         // CC31 70:
         // Divisimate preset: Vln1 + Vln2 + Vc 8va.
-        // SingleSource profile.
+        // SingleSource profile, top-line oriented.
         // v0.5.3 uses chord collection and active cap
         // to guarantee only one melodic/source note reaches Divisimate.
+        {
             70,
             "Vln1 + Vln2 + Vc 8va",
             ProfileType::SingleSource,
             SourceSelectionMode::Highest,
+            ExpectedDivisiMode::TopDown,
             1,
             48,
             84,
@@ -486,15 +510,15 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         },
 
         // CC31 80:
-        // Divisimate preset: Strings (open) 02.
+        // Divisimate preset: Strings open 02.
         // Divisimate shows: Bottom Up, 3 voices.
-        // v0.5 uses a chord collection window and active voice cap
-        // to prevent fast arpeggios from leaking extra voices into Divisimate.
+        // DivisiClean prepares a clean 3-note input group for Divisimate.
         {
             80,
             "Strings open 02",
             ProfileType::BlockVoicing,
             SourceSelectionMode::Highest,
+            ExpectedDivisiMode::BottomUp,
             3,
             48,
             84,
@@ -506,13 +530,15 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
 
         // CC31 88:
         // Divisimate preset: Tutti Bass Unison.
+        // SingleSource bass-oriented profile.
         // v0.5.2 uses chord collection and active cap
         // to guarantee only one bass source note reaches Divisimate.
         {
             88,
             "Tutti Bass Unison",
             ProfileType::SingleSource,
-            SourceSelectionMode::Lowest,
+            SourceSelectionMode::Highest,
+            ExpectedDivisiMode::BottomUp,
             1,
             36,
             57,
@@ -534,6 +560,7 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         "Unknown / Pass-through",
         ProfileType::PassThrough,
         SourceSelectionMode::Highest,
+        ExpectedDivisiMode::None,
         16,
         0,
         127,

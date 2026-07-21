@@ -31,6 +31,14 @@ enum class SourceSelectionMode
     ClosestToTarget
 };
 
+enum class ExpectedDivisiMode
+{
+    None,
+    BottomUp,
+    TopDown,
+    FillVoices
+};
+
 struct PresetProfile
 {
     int cc31 = -1;
@@ -38,12 +46,11 @@ struct PresetProfile
 
     ProfileType type = ProfileType::PassThrough;
     SourceSelectionMode selectionMode = SourceSelectionMode::Highest;
-
+    ExpectedDivisiMode expectedDivisiMode = ExpectedDivisiMode::None;
     int maxVoices = 16;
     int minNote = 0;
     int maxNote = 127;
     int targetNote = 60;
-
     bool useChordWindow = false;
     double chordWindowMs = 0.0;
     bool enforceActiveVoiceLimit = false;
@@ -94,6 +101,7 @@ public:
     juce::String getActiveProfileName() const;
 
     juce::String getActiveProfileTypeName() const;
+    juce::String getActiveExpectedDivisiModeName() const;
     int getActiveProfileMaxVoices() const;
     double getActiveProfileChordWindowMs() const;
     bool getActiveProfileUsesChordWindow() const;
