@@ -199,7 +199,9 @@ void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         {
             const auto profileNow = getProfileForCC31(activeCC31.load());
 
-            if (profileNow.useChordWindow && profileNow.type == ProfileType::BlockVoicing)
+            if (profileNow.useChordWindow
+                && (profileNow.type == ProfileType::BlockVoicing
+                    || profileNow.type == ProfileType::SingleSource))
             {
                 pendingNotes.push_back(
                     PendingNote
@@ -497,18 +499,22 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
             true
         },
 
+        // CC31 88:
+        // Divisimate preset: Tutti Bass Unison.
+        // v0.5.2 uses chord collection and active cap
+        // to guarantee only one bass source note reaches Divisimate.
         {
             88,
             "Tutti Bass Unison",
             ProfileType::SingleSource,
-            SourceSelectionMode::Highest,
+            SourceSelectionMode::Lowest,
             1,
             36,
             57,
             48,
-            false,
-            0.0,
-            false
+            true,
+            250.0,
+            true
         }
     };
 
@@ -604,7 +610,8 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
     if (pendingNotes.empty())
         return;
 
-    if (currentProfile.type != ProfileType::BlockVoicing)
+    if (currentProfile.type != ProfileType::BlockVoicing
+        && currentProfile.type != ProfileType::SingleSource)
     {
         pendingNotes.clear();
         return;
@@ -638,10 +645,6 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
     for (const auto& pending : pendingNoteOns)
         noteNumbers.push_back(pending.message.getNoteNumber());
 
-    const auto selectedIndices = chooseBlockVoicingIndicesFromNotes(noteNumbers, currentProfile);
-
-    std::vector<int> usedOutputNotes;
-
     auto getActiveMappedVoiceCount = [this]()
         {
             int count = 0;
@@ -655,8 +658,8 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
             return count;
         };
 
-    // First mark every pending note as suppressed.
-    // Selected/emitted notes will overwrite this with their actual output mapping.
+    // Mark all pending notes as suppressed first.
+    // Emitted notes will overwrite this with their real output mapping.
     for (const auto& pending : pendingNoteOns)
     {
         const int channel = pending.message.getChannel();
@@ -666,8 +669,10 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
         activeNoteMap[(size_t)mapIndex] = -2;
     }
 
-    for (const int selectedIndex : selectedIndices)
+    if (currentProfile.type == ProfileType::SingleSource)
     {
+        const int selectedIndex = chooseSingleSourceIndexFromNotes(noteNumbers, currentProfile);
+
         const auto& selected = pendingNoteOns[(size_t)selectedIndex];
 
         const int inputChannel = selected.message.getChannel();
@@ -677,45 +682,81 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
         if (currentProfile.enforceActiveVoiceLimit
             && getActiveMappedVoiceCount() >= currentProfile.maxVoices)
         {
-            // Leave this note marked as suppressed.
-            continue;
+            // Leave selected note marked as suppressed.
+            return;
         }
 
-        int outputNote = wrapNoteNearTarget(inputNote,
+        const int outputNote = wrapNoteNearTarget(inputNote,
             currentProfile.minNote,
             currentProfile.maxNote,
             currentProfile.targetNote);
-
-        // Avoid duplicate output notes if two input notes wrap to the same pitch.
-        // Try moving one octave up, then one octave down.
-        if (std::find(usedOutputNotes.begin(), usedOutputNotes.end(), outputNote) != usedOutputNotes.end())
-        {
-            const int up = outputNote + 12;
-            const int down = outputNote - 12;
-
-            if (up <= currentProfile.maxNote
-                && std::find(usedOutputNotes.begin(), usedOutputNotes.end(), up) == usedOutputNotes.end())
-            {
-                outputNote = up;
-            }
-            else if (down >= currentProfile.minNote
-                && std::find(usedOutputNotes.begin(), usedOutputNotes.end(), down) == usedOutputNotes.end())
-            {
-                outputNote = down;
-            }
-        }
-
-        // If still duplicate, suppress this note to prevent note-off confusion.
-        if (std::find(usedOutputNotes.begin(), usedOutputNotes.end(), outputNote) != usedOutputNotes.end())
-            continue;
-
-        usedOutputNotes.push_back(outputNote);
 
         auto transformedNoteOn = juce::MidiMessage::noteOn(inputChannel, outputNote, velocity);
         outputMidi.addEvent(transformedNoteOn, 0);
 
         const int mapIndex = getNoteMapIndex(inputChannel, inputNote);
         activeNoteMap[(size_t)mapIndex] = outputNote;
+
+        return;
+    }
+
+    if (currentProfile.type == ProfileType::BlockVoicing)
+    {
+        const auto selectedIndices = chooseBlockVoicingIndicesFromNotes(noteNumbers, currentProfile);
+
+        std::vector<int> usedOutputNotes;
+
+        for (const int selectedIndex : selectedIndices)
+        {
+            const auto& selected = pendingNoteOns[(size_t)selectedIndex];
+
+            const int inputChannel = selected.message.getChannel();
+            const int inputNote = selected.message.getNoteNumber();
+            const float velocity = selected.message.getFloatVelocity();
+
+            if (currentProfile.enforceActiveVoiceLimit
+                && getActiveMappedVoiceCount() >= currentProfile.maxVoices)
+            {
+                // Leave this note marked as suppressed.
+                continue;
+            }
+
+            int outputNote = wrapNoteNearTarget(inputNote,
+                currentProfile.minNote,
+                currentProfile.maxNote,
+                currentProfile.targetNote);
+
+            // Avoid duplicate output notes if two input notes wrap to the same pitch.
+            // Try moving one octave up, then one octave down.
+            if (std::find(usedOutputNotes.begin(), usedOutputNotes.end(), outputNote) != usedOutputNotes.end())
+            {
+                const int up = outputNote + 12;
+                const int down = outputNote - 12;
+
+                if (up <= currentProfile.maxNote
+                    && std::find(usedOutputNotes.begin(), usedOutputNotes.end(), up) == usedOutputNotes.end())
+                {
+                    outputNote = up;
+                }
+                else if (down >= currentProfile.minNote
+                    && std::find(usedOutputNotes.begin(), usedOutputNotes.end(), down) == usedOutputNotes.end())
+                {
+                    outputNote = down;
+                }
+            }
+
+            // If still duplicate, suppress this note to prevent note-off confusion.
+            if (std::find(usedOutputNotes.begin(), usedOutputNotes.end(), outputNote) != usedOutputNotes.end())
+                continue;
+
+            usedOutputNotes.push_back(outputNote);
+
+            auto transformedNoteOn = juce::MidiMessage::noteOn(inputChannel, outputNote, velocity);
+            outputMidi.addEvent(transformedNoteOn, 0);
+
+            const int mapIndex = getNoteMapIndex(inputChannel, inputNote);
+            activeNoteMap[(size_t)mapIndex] = outputNote;
+        }
     }
 }
 
