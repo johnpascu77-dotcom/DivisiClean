@@ -79,6 +79,8 @@ struct PresetProfile
     int minNote = 0;
     int maxNote = 127;
     int targetNote = 60;
+    int outputTranspose = 0;
+
     bool useChordWindow = false;
     double chordWindowMs = 0.0;
     bool enforceActiveVoiceLimit = false;
@@ -185,6 +187,7 @@ private:
     int chooseSingleSourceIndexFromNotes(const std::vector<int>& noteNumbers,
         const PresetProfile& profile) const;
     int jsonReloadCount = 0;
+    int applyOutputTranspose(int noteNumber, int transposeSemitones) const;
 
     ProfileType profileTypeFromString(const juce::String& text) const;
     SourceSelectionMode sourceSelectionModeFromString(const juce::String& text) const;

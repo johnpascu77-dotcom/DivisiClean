@@ -209,6 +209,7 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
         profile.minNote = static_cast<int>(profileObject->getProperty("minNote"));
         profile.maxNote = static_cast<int>(profileObject->getProperty("maxNote"));
         profile.targetNote = static_cast<int>(profileObject->getProperty("targetNote"));
+        profile.outputTranspose = static_cast<int>(profileObject->getProperty("outputTranspose"));
 
         profile.useChordWindow = static_cast<bool>(profileObject->getProperty("useChordWindow"));
         profile.chordWindowMs = static_cast<double>(profileObject->getProperty("chordWindowMs"));
@@ -555,10 +556,12 @@ void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             const int inputNote = selected.message.getNoteNumber();
             const float velocity = selected.message.getFloatVelocity();
 
-            const int outputNote = wrapNoteNearTarget(inputNote,
+            int outputNote = wrapNoteNearTarget(inputNote,
                 currentProfile.minNote,
                 currentProfile.maxNote,
                 currentProfile.targetNote);
+
+            outputNote = applyOutputTranspose(outputNote, currentProfile.outputTranspose);
 
             auto transformedNoteOn = juce::MidiMessage::noteOn(inputChannel, outputNote, velocity);
             processedBuffer.addEvent(transformedNoteOn, selected.samplePosition);
@@ -664,6 +667,11 @@ void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     flushPendingNotesIfReady(processedBuffer);
 
     midiMessages.swapWith(processedBuffer);
+}
+
+int DivisiCleanAudioProcessor::applyOutputTranspose(int noteNumber, int transposeSemitones) const
+{
+    return juce::jlimit(0, 127, noteNumber + transposeSemitones);
 }
 
 int DivisiCleanAudioProcessor::getActiveCC31() const
@@ -785,7 +793,13 @@ VoiceSourceRange DivisiCleanAudioProcessor::getVoiceSourceRangeForProfileRank(
             return range;
     }
 
-    return { rank, profile.minNote, profile.maxNote, profile.targetNote, 0 };
+    return {
+    rank,
+    profile.minNote,
+    profile.maxNote,
+    profile.targetNote,
+    profile.outputTranspose
+    };
 }
 
 int DivisiCleanAudioProcessor::getActiveProfileMaxVoices() const
@@ -847,6 +861,7 @@ PresetProfile DivisiCleanAudioProcessor::getHardcodedProfileForCC31(int cc31) co
             48,
             84,
             72,
+            0,
             true,
             250.0,
             true,
@@ -865,6 +880,7 @@ PresetProfile DivisiCleanAudioProcessor::getHardcodedProfileForCC31(int cc31) co
             48,
             84,
             60,
+            0,
             true,
             250.0,
             true,
@@ -887,6 +903,7 @@ PresetProfile DivisiCleanAudioProcessor::getHardcodedProfileForCC31(int cc31) co
             36,
             57,
             43,
+            0,
             true,
             250.0,
             true,
@@ -912,6 +929,7 @@ PresetProfile DivisiCleanAudioProcessor::getHardcodedProfileForCC31(int cc31) co
         0,
         127,
         60,
+        0,
         false,
         0.0,
         false,
@@ -1066,10 +1084,12 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
             return;
         }
 
-        const int outputNote = wrapNoteNearTarget(inputNote,
+        int outputNote = wrapNoteNearTarget(inputNote,
             currentProfile.minNote,
             currentProfile.maxNote,
             currentProfile.targetNote);
+
+        outputNote = applyOutputTranspose(outputNote, currentProfile.outputTranspose);
 
         auto transformedNoteOn = juce::MidiMessage::noteOn(inputChannel, outputNote, velocity);
         outputMidi.addEvent(transformedNoteOn, 0);
@@ -1127,13 +1147,21 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
             }
             else
             {
-                range = { rank, currentProfile.minNote, currentProfile.maxNote, currentProfile.targetNote, 0 };
+                range = {
+                    rank,
+                    currentProfile.minNote,
+                    currentProfile.maxNote,
+                    currentProfile.targetNote,
+                    currentProfile.outputTranspose
+                };
             }
 
-            const int outputNote = wrapNoteNearTarget(inputNote,
+            int outputNote = wrapNoteNearTarget(inputNote,
                 range.minNote,
                 range.maxNote,
                 range.targetNote);
+
+            outputNote = applyOutputTranspose(outputNote, range.outputTranspose);
 
             preparedNotes.push_back(
                 {
@@ -1172,7 +1200,7 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
             int outputNote = prepared.outputNote;
 
             // Avoid duplicate output notes if two input notes wrap to the same pitch.
-            // Try moving one octave up, then one octave down, inside the active range for this note.
+            // Try moving one octave up, then one octave down.
             if (std::find(usedOutputNotes.begin(), usedOutputNotes.end(), outputNote) != usedOutputNotes.end())
             {
                 const int up = outputNote + 12;
