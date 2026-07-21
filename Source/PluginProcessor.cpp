@@ -467,6 +467,11 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
     static const PresetProfile profiles[] =
     {
         {
+        // CC31 70:
+        // Divisimate preset: Vln1 + Vln2 + Vc 8va.
+        // SingleSource profile.
+        // v0.5.3 uses chord collection and active cap
+        // to guarantee only one melodic/source note reaches Divisimate.
             70,
             "Vln1 + Vln2 + Vc 8va",
             ProfileType::SingleSource,
@@ -475,9 +480,9 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
             48,
             84,
             72,
-            false,
-            0.0,
-            false
+            true,
+            250.0,
+            true
         },
 
         // CC31 80:
