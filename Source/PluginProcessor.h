@@ -104,6 +104,7 @@ public:
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
     void loadJsonProfiles();
+    void reloadJsonProfilesFromGui();
     juce::File getJsonProfilesFile() const;
 
     //==============================================================================
@@ -183,6 +184,7 @@ private:
     int wrapNoteNearTarget(int inputNote, int minNote, int maxNote, int targetNote) const;
     int chooseSingleSourceIndexFromNotes(const std::vector<int>& noteNumbers,
         const PresetProfile& profile) const;
+    int jsonReloadCount = 0;
 
     ProfileType profileTypeFromString(const juce::String& text) const;
     SourceSelectionMode sourceSelectionModeFromString(const juce::String& text) const;

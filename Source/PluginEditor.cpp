@@ -4,7 +4,7 @@
 DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
-    setSize(560, 365);
+    setSize(560, 395);
 
     titleLabel.setText("DivisiClean", juce::dontSendNotification);
     titleLabel.setJustificationType(juce::Justification::centred);
@@ -98,6 +98,8 @@ void DivisiCleanAudioProcessorEditor::resized()
     settingsLabel.setBounds(area.removeFromTop(26));
     pendingLabel.setBounds(area.removeFromTop(26));
     jsonStatusLabel.setBounds(area.removeFromTop(24));
+    area.removeFromTop(6);
+    reloadJsonButton.setBounds(area.removeFromTop(28).reduced(170, 0));
 }
 
 void DivisiCleanAudioProcessorEditor::timerCallback()
@@ -150,4 +152,11 @@ void DivisiCleanAudioProcessorEditor::timerCallback()
         "JSON: " + audioProcessor.getJsonProfileStatus(),
         juce::dontSendNotification
     );
+
+    reloadJsonButton.setButtonText("Reload JSON");
+    reloadJsonButton.onClick = [this]()
+        {
+            audioProcessor.reloadJsonProfilesFromGui();
+        };
+    addAndMakeVisible(reloadJsonButton);
 }

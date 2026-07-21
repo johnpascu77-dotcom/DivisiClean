@@ -266,6 +266,18 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
         + jsonFile.getFileName();
 }
 
+void DivisiCleanAudioProcessor::reloadJsonProfilesFromGui()
+{
+    pendingNotes.clear();
+    activeNoteMap.fill(-1);
+
+    loadJsonProfiles();
+
+    ++jsonReloadCount;
+
+    jsonProfileStatus += " | reload " + juce::String(jsonReloadCount);
+}
+
 juce::String DivisiCleanAudioProcessor::getJsonProfileStatus() const
 {
     return jsonProfileStatus;
@@ -387,24 +399,36 @@ void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     for (auto& pending : pendingNotes)
         pending.ageMs += blockMs;
 
+    juce::MidiBuffer processedBuffer;
+
+    // Important:
+    // Flush pending notes that became ready before reading new MIDI events
+    // from this block. Otherwise, new rhythmic material can be merged into
+    // an older chord window.
+    flushPendingNotesIfReady(processedBuffer);
+
     const auto currentProfile = getProfileForCC31(activeCC31.load());
 
     // Pass-through profiles:
     // Detect CC31, otherwise leave midiMessages unchanged.
     if (currentProfile.type == ProfileType::PassThrough)
     {
+        // If we flushed anything above, we cannot simply return with the
+        // original midiMessages unchanged. We need to preserve input events too.
         for (const auto metadata : midiMessages)
         {
             const auto message = metadata.getMessage();
+            const int samplePosition = metadata.samplePosition;
 
             if (message.isController() && message.getControllerNumber() == 31)
                 activeCC31.store(message.getControllerValue());
+
+            processedBuffer.addEvent(message, samplePosition);
         }
 
+        midiMessages.swapWith(processedBuffer);
         return;
     }
-
-    juce::MidiBuffer processedBuffer;
 
     struct PendingNoteOn
     {
