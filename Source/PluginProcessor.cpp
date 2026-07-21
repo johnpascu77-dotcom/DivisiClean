@@ -433,6 +433,35 @@ juce::String DivisiCleanAudioProcessor::getActiveProfileTypeName() const
     }
 }
 
+juce::String DivisiCleanAudioProcessor::getActiveSourceReductionModeName() const
+{
+    const auto profile = getProfileForCC31(activeCC31.load());
+
+    switch (profile.reductionMode)
+    {
+    case SourceReductionMode::None:
+        return "None";
+
+    case SourceReductionMode::LowestN:
+        return "Lowest N";
+
+    case SourceReductionMode::HighestN:
+        return "Highest N";
+
+    case SourceReductionMode::Spread:
+        return "Spread";
+
+    case SourceReductionMode::ClosestToTarget:
+        return "Closest To Target";
+
+    case SourceReductionMode::AsPlayed:
+        return "As Played";
+
+    default:
+        return "Unknown";
+    }
+}
+
 juce::String DivisiCleanAudioProcessor::getActiveExpectedDivisiModeName() const
 {
     const auto profile = getProfileForCC31(activeCC31.load());
@@ -499,6 +528,7 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
             "Vln1 + Vln2 + Vc 8va",
             ProfileType::SingleSource,
             SourceSelectionMode::Highest,
+            SourceReductionMode::None,
             ExpectedDivisiMode::TopDown,
             1,
             48,
@@ -512,12 +542,15 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         // CC31 80:
         // Divisimate preset: Strings open 02.
         // Divisimate shows: Bottom Up, 3 voices.
-        // DivisiClean prepares a clean 3-note input group for Divisimate.
+        // DivisiClean currently uses Spread source reduction:
+        // it preserves a representative contour from the generated chord,
+        // then wraps the selected notes into the preset target range.
         {
             80,
             "Strings open 02",
             ProfileType::BlockVoicing,
             SourceSelectionMode::Highest,
+            SourceReductionMode::Spread,
             ExpectedDivisiMode::BottomUp,
             3,
             48,
@@ -531,13 +564,13 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         // CC31 88:
         // Divisimate preset: Tutti Bass Unison.
         // SingleSource bass-oriented profile.
-        // v0.5.2 uses chord collection and active cap
-        // to guarantee only one bass source note reaches Divisimate.
+        // Uses Lowest source selection to guarantee the bass source note.
         {
             88,
             "Tutti Bass Unison",
             ProfileType::SingleSource,
             SourceSelectionMode::Highest,
+            SourceReductionMode::None,
             ExpectedDivisiMode::BottomUp,
             1,
             36,
@@ -560,6 +593,7 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         "Unknown / Pass-through",
         ProfileType::PassThrough,
         SourceSelectionMode::Highest,
+        SourceReductionMode::None,
         ExpectedDivisiMode::None,
         16,
         0,
@@ -899,44 +933,151 @@ std::vector<int> DivisiCleanAudioProcessor::chooseBlockVoicingIndicesFromNotes(c
     for (int i = 0; i < static_cast<int>(noteNumbers.size()); ++i)
         indices.push_back(i);
 
-    std::sort(indices.begin(), indices.end(),
-        [&noteNumbers](int a, int b)
-        {
-            return noteNumbers[(size_t)a] < noteNumbers[(size_t)b];
-        });
-
     const int maxVoices = juce::jlimit(1, 16, profile.maxVoices);
 
-    if (static_cast<int> (indices.size()) > maxVoices)
+    auto sortLowToHigh = [&noteNumbers](std::vector<int>& values)
+        {
+            std::sort(values.begin(), values.end(),
+                [&noteNumbers](int a, int b)
+                {
+                    return noteNumbers[(size_t)a] < noteNumbers[(size_t)b];
+                });
+        };
+
+    auto sortHighToLow = [&noteNumbers](std::vector<int>& values)
+        {
+            std::sort(values.begin(), values.end(),
+                [&noteNumbers](int a, int b)
+                {
+                    return noteNumbers[(size_t)a] > noteNumbers[(size_t)b];
+                });
+        };
+
+    switch (profile.reductionMode)
     {
-        std::vector<int> reduced;
-        reduced.reserve((size_t)maxVoices);
+    case SourceReductionMode::LowestN:
+    {
+        sortLowToHigh(indices);
 
-        if (maxVoices == 1)
-        {
-            reduced.push_back(indices.back());
-        }
-        else
-        {
-            const int lastSourceIndex = static_cast<int> (indices.size()) - 1;
-            const int lastTargetIndex = maxVoices - 1;
+        if (static_cast<int>(indices.size()) > maxVoices)
+            indices.resize((size_t)maxVoices);
 
-            for (int i = 0; i < maxVoices; ++i)
+        break;
+    }
+
+    case SourceReductionMode::HighestN:
+    {
+        sortHighToLow(indices);
+
+        if (static_cast<int>(indices.size()) > maxVoices)
+            indices.resize((size_t)maxVoices);
+
+        break;
+    }
+
+    case SourceReductionMode::Spread:
+    {
+        // Original DivisiClean block behavior:
+        // sort source notes low -> high, then select an evenly distributed
+        // subset when there are more notes than the profile allows.
+        sortLowToHigh(indices);
+
+        if (static_cast<int>(indices.size()) > maxVoices)
+        {
+            std::vector<int> reduced;
+            reduced.reserve((size_t)maxVoices);
+
+            if (maxVoices == 1)
             {
-                const float ratio = static_cast<float>(i) / static_cast<float>(lastTargetIndex);
-                const int sourcePosition = juce::roundToInt(ratio * static_cast<float>(lastSourceIndex));
-
-                reduced.push_back(indices[(size_t)sourcePosition]);
+                reduced.push_back(indices.back());
             }
+            else
+            {
+                const int lastSourceIndex = static_cast<int>(indices.size()) - 1;
+                const int lastTargetIndex = maxVoices - 1;
+
+                for (int i = 0; i < maxVoices; ++i)
+                {
+                    const float ratio = static_cast<float>(i) / static_cast<float>(lastTargetIndex);
+                    const int sourcePosition = juce::roundToInt(ratio * static_cast<float>(lastSourceIndex));
+
+                    reduced.push_back(indices[(size_t)sourcePosition]);
+                }
+            }
+
+            indices = reduced;
+
+            // Preserve low -> high source order after reduction.
+            sortLowToHigh(indices);
         }
 
-        indices = reduced;
+        break;
+    }
 
+    case SourceReductionMode::ClosestToTarget:
+    {
         std::sort(indices.begin(), indices.end(),
-            [&noteNumbers](int a, int b)
+            [&noteNumbers, &profile](int a, int b)
             {
-                return noteNumbers[(size_t)a] < noteNumbers[(size_t)b];
+                const int distanceA = std::abs(noteNumbers[(size_t)a] - profile.targetNote);
+                const int distanceB = std::abs(noteNumbers[(size_t)b] - profile.targetNote);
+
+                if (distanceA == distanceB)
+                    return noteNumbers[(size_t)a] < noteNumbers[(size_t)b];
+
+                return distanceA < distanceB;
             });
+
+        if (static_cast<int>(indices.size()) > maxVoices)
+            indices.resize((size_t)maxVoices);
+
+        sortLowToHigh(indices);
+        break;
+    }
+
+    case SourceReductionMode::AsPlayed:
+    {
+        if (static_cast<int>(indices.size()) > maxVoices)
+            indices.resize((size_t)maxVoices);
+
+        break;
+    }
+
+    case SourceReductionMode::None:
+    default:
+    {
+        // Safe fallback: preserve old deterministic behavior as Spread.
+        sortLowToHigh(indices);
+
+        if (static_cast<int>(indices.size()) > maxVoices)
+        {
+            std::vector<int> reduced;
+            reduced.reserve((size_t)maxVoices);
+
+            if (maxVoices == 1)
+            {
+                reduced.push_back(indices.back());
+            }
+            else
+            {
+                const int lastSourceIndex = static_cast<int>(indices.size()) - 1;
+                const int lastTargetIndex = maxVoices - 1;
+
+                for (int i = 0; i < maxVoices; ++i)
+                {
+                    const float ratio = static_cast<float>(i) / static_cast<float>(lastTargetIndex);
+                    const int sourcePosition = juce::roundToInt(ratio * static_cast<float>(lastSourceIndex));
+
+                    reduced.push_back(indices[(size_t)sourcePosition]);
+                }
+            }
+
+            indices = reduced;
+            sortLowToHigh(indices);
+        }
+
+        break;
+    }
     }
 
     return indices;

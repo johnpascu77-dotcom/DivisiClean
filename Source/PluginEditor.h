@@ -22,6 +22,7 @@ private:
     juce::Label cc31Label;
     juce::Label profileLabel;
     juce::Label typeLabel;
+    juce::Label reductionModeLabel;
     juce::Label divisiModeLabel;
     juce::Label settingsLabel;
     juce::Label pendingLabel;
