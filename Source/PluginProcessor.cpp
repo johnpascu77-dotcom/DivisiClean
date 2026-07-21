@@ -485,6 +485,49 @@ juce::String DivisiCleanAudioProcessor::getActiveExpectedDivisiModeName() const
     }
 }
 
+juce::String DivisiCleanAudioProcessor::registerWrapModeToString(RegisterWrapMode mode) const
+{
+    switch (mode)
+    {
+    case RegisterWrapMode::PerNoteNearTarget:
+        return "PerNoteNearTarget";
+
+    case RegisterWrapMode::PerVoiceRange:
+        return "PerVoiceRange";
+
+    default:
+        return "Unknown";
+    }
+}
+
+juce::String DivisiCleanAudioProcessor::getActiveRegisterWrapModeName() const
+{
+    const auto profile = getProfileForCC31(activeCC31.load());
+    return registerWrapModeToString(profile.registerWrapMode);
+}
+
+VoiceSourceRange DivisiCleanAudioProcessor::getVoiceSourceRangeForProfileRank(
+    const PresetProfile& profile,
+    int rank,
+    int totalRanks) const
+{
+    if (profile.cc31 == 80
+        && profile.registerWrapMode == RegisterWrapMode::PerVoiceRange
+        && totalRanks == 3)
+    {
+        if (rank == 0)
+            return { 40, 60, 48 };
+
+        if (rank == 1)
+            return { 55, 67, 60 };
+
+        if (rank == 2)
+            return { 60, 79, 67 };
+    }
+
+    return { profile.minNote, profile.maxNote, profile.targetNote };
+}
+
 int DivisiCleanAudioProcessor::getActiveProfileMaxVoices() const
 {
     const auto profile = getProfileForCC31(activeCC31.load());
@@ -566,7 +609,7 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         // CC31 88:
         // Divisimate preset: Tutti Bass Unison.
         // SingleSource bass-oriented profile.
-        // Uses Lowest source selection to guarantee the bass source note.
+        // Uses Highest source selection, then wraps the selected source into the low target range.
         // Although this is a low-instrument preset, the source is intentionally
         // selected from the highest generated note. The selected melodic source
         // is then wrapped into the low target range for the Divisimate preset.
@@ -601,6 +644,7 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         SourceSelectionMode::Highest,
         SourceReductionMode::None,
         ExpectedDivisiMode::None,
+        RegisterWrapMode::PerNoteNearTarget,
         16,
         0,
         127,
@@ -774,18 +818,86 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
 
     if (currentProfile.type == ProfileType::BlockVoicing)
     {
-        const auto selectedIndices = chooseBlockVoicingIndicesFromNotes(noteNumbers, currentProfile);
+        auto selectedIndices = chooseBlockVoicingIndicesFromNotes(noteNumbers, currentProfile);
 
-        std::vector<int> usedOutputNotes;
-
-        for (const int selectedIndex : selectedIndices)
+        struct PreparedSelectedNote
         {
+            int selectedIndex = 0;
+            int inputChannel = 1;
+            int inputNote = 0;
+            float velocity = 1.0f;
+            int rank = 0;
+            int outputNote = 0;
+            int minNote = 0;
+            int maxNote = 127;
+        };
+
+        std::vector<PreparedSelectedNote> preparedNotes;
+        preparedNotes.reserve(selectedIndices.size());
+
+        if (currentProfile.registerWrapMode == RegisterWrapMode::PerVoiceRange)
+        {
+            std::sort(selectedIndices.begin(), selectedIndices.end(),
+                [&noteNumbers](int a, int b)
+                {
+                    return noteNumbers[(size_t)a] < noteNumbers[(size_t)b];
+                });
+        }
+
+        const int totalRanks = static_cast<int>(selectedIndices.size());
+
+        for (int rank = 0; rank < totalRanks; ++rank)
+        {
+            const int selectedIndex = selectedIndices[(size_t)rank];
             const auto& selected = pendingNoteOns[(size_t)selectedIndex];
 
             const int inputChannel = selected.message.getChannel();
             const int inputNote = selected.message.getNoteNumber();
             const float velocity = selected.message.getFloatVelocity();
 
+            VoiceSourceRange range;
+
+            if (currentProfile.registerWrapMode == RegisterWrapMode::PerVoiceRange)
+            {
+                range = getVoiceSourceRangeForProfileRank(currentProfile, rank, totalRanks);
+            }
+            else
+            {
+                range = { currentProfile.minNote, currentProfile.maxNote, currentProfile.targetNote };
+            }
+
+            const int outputNote = wrapNoteNearTarget(inputNote,
+                range.minNote,
+                range.maxNote,
+                range.targetNote);
+
+            preparedNotes.push_back(
+                {
+                    selectedIndex,
+                    inputChannel,
+                    inputNote,
+                    velocity,
+                    rank,
+                    outputNote,
+                    range.minNote,
+                    range.maxNote
+                }
+            );
+        }
+
+        if (currentProfile.registerWrapMode == RegisterWrapMode::PerVoiceRange)
+        {
+            std::sort(preparedNotes.begin(), preparedNotes.end(),
+                [](const PreparedSelectedNote& a, const PreparedSelectedNote& b)
+                {
+                    return a.outputNote < b.outputNote;
+                });
+        }
+
+        std::vector<int> usedOutputNotes;
+
+        for (auto& prepared : preparedNotes)
+        {
             if (currentProfile.enforceActiveVoiceLimit
                 && getActiveMappedVoiceCount() >= currentProfile.maxVoices)
             {
@@ -793,24 +905,21 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
                 continue;
             }
 
-            int outputNote = wrapNoteNearTarget(inputNote,
-                currentProfile.minNote,
-                currentProfile.maxNote,
-                currentProfile.targetNote);
+            int outputNote = prepared.outputNote;
 
             // Avoid duplicate output notes if two input notes wrap to the same pitch.
-            // Try moving one octave up, then one octave down.
+            // Try moving one octave up, then one octave down, inside the active range for this note.
             if (std::find(usedOutputNotes.begin(), usedOutputNotes.end(), outputNote) != usedOutputNotes.end())
             {
                 const int up = outputNote + 12;
                 const int down = outputNote - 12;
 
-                if (up <= currentProfile.maxNote
+                if (up <= prepared.maxNote
                     && std::find(usedOutputNotes.begin(), usedOutputNotes.end(), up) == usedOutputNotes.end())
                 {
                     outputNote = up;
                 }
-                else if (down >= currentProfile.minNote
+                else if (down >= prepared.minNote
                     && std::find(usedOutputNotes.begin(), usedOutputNotes.end(), down) == usedOutputNotes.end())
                 {
                     outputNote = down;
@@ -823,10 +932,13 @@ void DivisiCleanAudioProcessor::flushPendingNotesNow(juce::MidiBuffer& outputMid
 
             usedOutputNotes.push_back(outputNote);
 
-            auto transformedNoteOn = juce::MidiMessage::noteOn(inputChannel, outputNote, velocity);
+            auto transformedNoteOn = juce::MidiMessage::noteOn(prepared.inputChannel,
+                outputNote,
+                prepared.velocity);
+
             outputMidi.addEvent(transformedNoteOn, 0);
 
-            const int mapIndex = getNoteMapIndex(inputChannel, inputNote);
+            const int mapIndex = getNoteMapIndex(prepared.inputChannel, prepared.inputNote);
             activeNoteMap[(size_t)mapIndex] = outputNote;
         }
     }

@@ -24,6 +24,7 @@ private:
     juce::Label typeLabel;
     juce::Label reductionModeLabel;
     juce::Label divisiModeLabel;
+    juce::Label wrapModeLabel;
     juce::Label settingsLabel;
     juce::Label pendingLabel;
 

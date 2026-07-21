@@ -55,6 +55,13 @@ enum class RegisterWrapMode
     PerVoiceRange
 };
 
+struct VoiceSourceRange
+{
+    int minNote = 0;
+    int maxNote = 127;
+    int targetNote = 60;
+};
+
 struct PresetProfile
 {
     int cc31 = -1;
@@ -122,6 +129,7 @@ public:
     juce::String getActiveProfileTypeName() const;
     juce::String getActiveSourceReductionModeName() const;
     juce::String getActiveExpectedDivisiModeName() const;
+    juce::String getActiveRegisterWrapModeName() const;
     int getActiveProfileMaxVoices() const;
     double getActiveProfileChordWindowMs() const;
     bool getActiveProfileUsesChordWindow() const;
@@ -156,12 +164,16 @@ private:
 
     PresetProfile getProfileForCC31(int cc31) const;
     juce::String getProfileNameForCC31(int cc31) const;
+    juce::String registerWrapModeToString(RegisterWrapMode mode) const;
 
     int getNoteMapIndex(int channel, int noteNumber) const;
     int wrapNoteNearTarget(int inputNote, int minNote, int maxNote, int targetNote) const;
-
     int chooseSingleSourceIndexFromNotes(const std::vector<int>& noteNumbers,
         const PresetProfile& profile) const;
+
+    VoiceSourceRange getVoiceSourceRangeForProfileRank(const PresetProfile& profile,
+        int rank,
+        int totalRanks) const;
 
     std::vector<int> chooseBlockVoicingIndicesFromNotes(const std::vector<int>& noteNumbers,
         const PresetProfile& profile) const;

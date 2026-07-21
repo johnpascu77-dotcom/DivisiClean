@@ -4,7 +4,7 @@
 DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
-    setSize(560, 315);
+    setSize(560, 340);
 
     titleLabel.setText("DivisiClean", juce::dontSendNotification);
     titleLabel.setJustificationType(juce::Justification::centred);
@@ -35,6 +35,11 @@ DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudi
     divisiModeLabel.setJustificationType(juce::Justification::centred);
     divisiModeLabel.setFont(juce::FontOptions(15.0f));
     addAndMakeVisible(divisiModeLabel);
+
+    wrapModeLabel.setText("Wrap: -", juce::dontSendNotification);
+    wrapModeLabel.setJustificationType(juce::Justification::centred);
+    wrapModeLabel.setFont(juce::FontOptions(15.0f));
+    addAndMakeVisible(wrapModeLabel);
 
     settingsLabel.setText("Max voices: - | Window: - | Cap: -", juce::dontSendNotification);
     settingsLabel.setJustificationType(juce::Justification::centred);
@@ -85,6 +90,7 @@ void DivisiCleanAudioProcessorEditor::resized()
     typeLabel.setBounds(area.removeFromTop(26));
     reductionModeLabel.setBounds(area.removeFromTop(26));
     divisiModeLabel.setBounds(area.removeFromTop(26));
+    wrapModeLabel.setBounds(area.removeFromTop(26));
     settingsLabel.setBounds(area.removeFromTop(26));
     pendingLabel.setBounds(area.removeFromTop(26));
 }
@@ -119,6 +125,9 @@ void DivisiCleanAudioProcessorEditor::timerCallback()
         windowText = juce::String(audioProcessor.getActiveProfileChordWindowMs(), 0) + " ms";
     else
         windowText = "OFF";
+
+    wrapModeLabel.setText("Wrap: " + audioProcessor.getActiveRegisterWrapModeName(),
+        juce::dontSendNotification);
 
     settingsLabel.setText(
         "Max voices: " + juce::String(audioProcessor.getActiveProfileMaxVoices())
