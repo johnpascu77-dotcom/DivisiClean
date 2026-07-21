@@ -565,6 +565,9 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
         // Divisimate preset: Tutti Bass Unison.
         // SingleSource bass-oriented profile.
         // Uses Lowest source selection to guarantee the bass source note.
+        // Although this is a low-instrument preset, the source is intentionally
+        // selected from the highest generated note. The selected melodic source
+        // is then wrapped into the low target range for the Divisimate preset.
         {
             88,
             "Tutti Bass Unison",
@@ -575,7 +578,7 @@ PresetProfile DivisiCleanAudioProcessor::getProfileForCC31(int cc31) const
             1,
             36,
             57,
-            48,
+            43,
             true,
             250.0,
             true
