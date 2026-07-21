@@ -49,6 +49,12 @@ enum class ExpectedDivisiMode
     FillVoices
 };
 
+enum class RegisterWrapMode
+{
+    PerNoteNearTarget,
+    PerVoiceRange
+};
+
 struct PresetProfile
 {
     int cc31 = -1;
@@ -58,6 +64,8 @@ struct PresetProfile
     SourceSelectionMode selectionMode = SourceSelectionMode::Highest;
     SourceReductionMode reductionMode = SourceReductionMode::None;
     ExpectedDivisiMode expectedDivisiMode = ExpectedDivisiMode::None;
+    RegisterWrapMode registerWrapMode = RegisterWrapMode::PerNoteNearTarget;
+
     int maxVoices = 16;
     int minNote = 0;
     int maxNote = 127;
