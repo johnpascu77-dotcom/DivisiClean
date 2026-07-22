@@ -269,14 +269,46 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
 void DivisiCleanAudioProcessor::reloadJsonProfilesFromGui()
 {
-    pendingNotes.clear();
-    activeNoteMap.fill(-1);
-
+    // JSON loading remains on the GUI/message thread.
+    // MIDI state reset and panic are requested for the next processBlock(),
+    // so note maps are not cleared directly from the GUI thread.
     loadJsonProfiles();
+
+    requestMidiPanicAndStateReset();
 
     ++jsonReloadCount;
 
-    jsonProfileStatus += " | reload " + juce::String(jsonReloadCount);
+    jsonProfileStatus += " | reload "
+        + juce::String(jsonReloadCount)
+        + " | panic/reset requested";
+}
+
+void DivisiCleanAudioProcessor::requestMidiPanicAndStateReset()
+{
+    midiPanicAndResetRequested.store(true);
+}
+
+void DivisiCleanAudioProcessor::addMidiPanicMessages(juce::MidiBuffer& outputMidi, int samplePosition) const
+{
+    for (int channel = 1; channel <= 16; ++channel)
+    {
+        // Sustain pedal off.
+        outputMidi.addEvent(juce::MidiMessage::controllerEvent(channel, 64, 0), samplePosition);
+
+        // All Sound Off.
+        outputMidi.addEvent(juce::MidiMessage::controllerEvent(channel, 120, 0), samplePosition);
+
+        // Reset All Controllers.
+        outputMidi.addEvent(juce::MidiMessage::controllerEvent(channel, 121, 0), samplePosition);
+
+        // All Notes Off.
+        outputMidi.addEvent(juce::MidiMessage::controllerEvent(channel, 123, 0), samplePosition);
+
+        // Explicit note-offs as a belt-and-braces fallback for hosts/instruments
+        // that ignore All Notes Off or All Sound Off.
+        for (int note = 0; note < 128; ++note)
+            outputMidi.addEvent(juce::MidiMessage::noteOff(channel, note), samplePosition);
+    }
 }
 
 juce::String DivisiCleanAudioProcessor::getJsonProfileStatus() const
@@ -395,12 +427,20 @@ void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // This plugin produces no audio.
     buffer.clear();
 
+    juce::MidiBuffer processedBuffer;
+
+    if (midiPanicAndResetRequested.exchange(false))
+    {
+        addMidiPanicMessages(processedBuffer, 0);
+
+        pendingNotes.clear();
+        activeNoteMap.fill(-1);
+    }
+
     const double blockMs = samplesToMs(buffer.getNumSamples());
 
     for (auto& pending : pendingNotes)
         pending.ageMs += blockMs;
-
-    juce::MidiBuffer processedBuffer;
 
     // Important:
     // Flush pending notes that became ready before reading new MIDI events
@@ -629,6 +669,8 @@ void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
                     currentProfile.minNote,
                     currentProfile.maxNote,
                     currentProfile.targetNote);
+
+                outputNote = applyOutputTranspose(outputNote, currentProfile.outputTranspose);
 
                 // Avoid duplicate output notes if two input notes wrap to the same pitch.
                 // Try moving one octave up, then one octave down.

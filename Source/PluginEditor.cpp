@@ -153,7 +153,8 @@ void DivisiCleanAudioProcessorEditor::timerCallback()
         juce::dontSendNotification
     );
 
-    reloadJsonButton.setButtonText("Reload JSON");
+    reloadJsonButton.setButtonText("Reload JSON + Panic");
+    reloadJsonButton.setTooltip("Reloads JSON profiles and sends MIDI panic/reset at the next processing block. Best used while transport is stopped.");
     reloadJsonButton.onClick = [this]()
         {
             audioProcessor.reloadJsonProfilesFromGui();

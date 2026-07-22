@@ -12,6 +12,7 @@
 #include <array>
 #include <vector>
 #include <algorithm>
+#include <atomic>
 
 //==============================================================================
 /**
@@ -109,6 +110,9 @@ public:
     void reloadJsonProfilesFromGui();
     juce::File getJsonProfilesFile() const;
 
+    void requestMidiPanicAndStateReset();
+    void addMidiPanicMessages(juce::MidiBuffer& outputMidi, int samplePosition) const;
+
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
@@ -168,6 +172,7 @@ private:
     void flushPendingNotesNow(juce::MidiBuffer& outputMidi);
 
     std::atomic<int> activeCC31{ -1 };
+    std::atomic<bool> midiPanicAndResetRequested{ false };
 
     // Maps input notes to transformed output notes.
     // Index = (channel - 1) * 128 + inputNote.
