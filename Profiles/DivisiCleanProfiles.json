@@ -1,0 +1,773 @@
+{
+  "schemaVersion": 1,
+  "noteNumbering": "C3=60",
+  "profiles": [
+    {
+      "cc31": 61,
+      "name": "Vln1 Vln2 2-part",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 2,
+      "minNote": 60,
+      "maxNote": 91,
+      "targetNote": 76,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 60,
+          "maxNote": 84,
+          "targetNote": 72,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 64,
+          "maxNote": 91,
+          "targetNote": 79,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 62,
+      "name": "Vln1 Vln2 Vla stacked",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 55,
+      "maxNote": 88,
+      "targetNote": 69,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 55,
+          "maxNote": 72,
+          "targetNote": 62,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 62,
+          "maxNote": 79,
+          "targetNote": 69,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 67,
+          "maxNote": 88,
+          "targetNote": 76,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 63,
+      "name": "Vla Vc DB stacked",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 30,
+      "maxNote": 74,
+      "targetNote": 57,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 30,
+          "maxNote": 42,
+          "targetNote": 38,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 62,
+          "maxNote": 74,
+          "targetNote": 67,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 64,
+      "name": "Vc DB 2-part",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 2,
+      "minNote": 30,
+      "maxNote": 67,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 30,
+          "maxNote": 42,
+          "targetNote": 38,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 65,
+      "name": "Violins 1",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 67,
+      "maxNote": 91,
+      "targetNote": 79,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 67,
+          "maxNote": 79,
+          "targetNote": 72,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 72,
+          "maxNote": 84,
+          "targetNote": 76,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 76,
+          "maxNote": 88,
+          "targetNote": 81,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 79,
+          "maxNote": 91,
+          "targetNote": 84,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 66,
+      "name": "Violins 2",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 67,
+      "maxNote": 88,
+      "targetNote": 76,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 67,
+          "maxNote": 76,
+          "targetNote": 71,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 71,
+          "maxNote": 81,
+          "targetNote": 74,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 74,
+          "maxNote": 84,
+          "targetNote": 79,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 77,
+          "maxNote": 88,
+          "targetNote": 82,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 67,
+      "name": "Violas",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 55,
+      "maxNote": 79,
+      "targetNote": 67,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 55,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 60,
+          "maxNote": 72,
+          "targetNote": 65,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 64,
+          "maxNote": 76,
+          "targetNote": 69,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 67,
+          "maxNote": 79,
+          "targetNote": 74,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 68,
+      "name": "Cellos",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 48,
+      "maxNote": 76,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 60,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 72,
+          "targetNote": 65,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 67,
+          "maxNote": 76,
+          "targetNote": 72,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 69,
+      "name": "Vln1 Vln2 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 67,
+      "maxNote": 81,
+      "targetNote": 74,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 70,
+      "name": "Vln1 + Vln2 + Vc 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "None",
+      "expectedDivisiMode": "TopDown",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 43,
+      "maxNote": 60,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 71,
+      "name": "Vla Vc DB unison 8va 15me",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 60,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 72,
+      "name": "Vc DB unison 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 44,
+      "maxNote": 60,
+      "targetNote": 50,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 73,
+      "name": "Strings quintet",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "TopDown",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 5,
+      "minNote": 28,
+      "maxNote": 91,
+      "targetNote": 67,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 67,
+          "maxNote": 91,
+          "targetNote": 79,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 67,
+          "maxNote": 84,
+          "targetNote": 74,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 48,
+          "maxNote": 67,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 4,
+          "minNote": 28,
+          "maxNote": 48,
+          "targetNote": 36,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 74,
+      "name": "Vln1 Vln2 Vla open",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 60,
+      "maxNote": 88,
+      "targetNote": 72,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 69,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 67,
+          "maxNote": 84,
+          "targetNote": 76,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 75,
+      "name": "Strings dbl lead",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 60,
+      "maxNote": 91,
+      "targetNote": 72,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 67,
+          "maxNote": 84,
+          "targetNote": 74,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 72,
+          "maxNote": 91,
+          "targetNote": 81,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 76,
+      "name": "Vla. + Vc. + DB open",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 40,
+      "maxNote": 84,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 40,
+          "maxNote": 60,
+          "targetNote": 48,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 60,
+          "maxNote": 74,
+          "targetNote": 64,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 64,
+          "maxNote": 79,
+          "targetNote": 72,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 77,
+      "name": "Strings quartet 01",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 48,
+      "maxNote": 91,
+      "targetNote": 64,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 67,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 67,
+          "maxNote": 84,
+          "targetNote": 74,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 67,
+          "maxNote": 91,
+          "targetNote": 79,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 78,
+      "name": "Strings quartet 02",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 48,
+      "maxNote": 84,
+      "targetNote": 64,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 60,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 67,
+          "maxNote": 84,
+          "targetNote": 74,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 67,
+          "maxNote": 91,
+          "targetNote": 79,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 79,
+      "name": "Strings open 01",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 48,
+      "maxNote": 84,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 52,
+          "maxNote": 67,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 72,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 79,
+          "targetNote": 67,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 80,
+      "name": "Strings open 02",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 48,
+      "maxNote": 84,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 40,
+          "maxNote": 60,
+          "targetNote": 48,
+          "outputTranspose": -12
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 79,
+          "targetNote": 67,
+          "outputTranspose": -12
+        }
+      ]
+    },
+    {
+      "cc31": 88,
+      "name": "Tutti Bass Unison",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "None",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 41,
+      "maxNote": 55,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 250,
+      "enforceActiveVoiceLimit": true
+    }
+  ]
+}
