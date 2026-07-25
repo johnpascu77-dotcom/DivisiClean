@@ -531,13 +531,33 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
     const auto jsonFile = getJsonProfilesFile();
 
+    const auto makeJsonStatus = [this, &jsonFile](const juce::String& state,
+        const juce::String& message,
+        int profileCount = -1)
+        {
+            juce::String status;
+
+            status << "JSON " << state
+                << " | Mode: " << getEngineModeDisplayName()
+                << " | Enum: " << juce::String(static_cast<int>(getEngineMode()))
+                << " | File: " << jsonFile.getFileName();
+
+            if (profileCount >= 0)
+                status << " | Profiles: " << juce::String(profileCount);
+
+            status << " | " << message
+                << " | Path: " << jsonFile.getFullPathName();
+
+            return status;
+        };
+
 
 
     if (!jsonFile.existsAsFile())
 
     {
 
-        jsonProfileStatus = "JSON file not found, using built-in profiles";
+        jsonProfileStatus = makeJsonStatus("ERROR", "File not found, using built-in profiles");
 
         return;
 
@@ -553,7 +573,7 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
     {
 
-        jsonProfileStatus = "JSON file is empty, using built-in profiles";
+        jsonProfileStatus = makeJsonStatus("ERROR", "File is empty, using built-in profiles");
 
         return;
 
@@ -571,7 +591,7 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
     {
 
-        jsonProfileStatus = "JSON parse failed: " + parseResult.getErrorMessage();
+        jsonProfileStatus = makeJsonStatus("ERROR", "Parse failed: " + parseResult.getErrorMessage());
 
         return;
 
@@ -583,7 +603,7 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
     {
 
-        jsonProfileStatus = "JSON root is not an object, using built-in profiles";
+        jsonProfileStatus = makeJsonStatus("ERROR", "Root is not an object, using built-in profiles");
 
         return;
 
@@ -599,7 +619,7 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
     {
 
-        jsonProfileStatus = "JSON root object invalid, using built-in profiles";
+        jsonProfileStatus = makeJsonStatus("ERROR", "Root object invalid, using built-in profiles");
 
         return;
 
@@ -629,7 +649,7 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
     {
 
-        jsonProfileStatus = "JSON profiles field missing or not an array";
+        jsonProfileStatus = makeJsonStatus("ERROR", "profiles field missing or not an array");
 
         return;
 
@@ -645,7 +665,7 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
     {
 
-        jsonProfileStatus = "JSON profiles array is empty, using built-in profiles";
+        jsonProfileStatus = makeJsonStatus("ERROR", "profiles array is empty, using built-in profiles");
 
         return;
 
@@ -799,7 +819,7 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
     {
 
-        jsonProfileStatus = "No valid JSON profiles loaded, using built-in profiles";
+        jsonProfileStatus = makeJsonStatus("ERROR", "No valid JSON profiles loaded, using built-in profiles");
 
         return;
 
@@ -813,21 +833,9 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
 
 
-    jsonProfileStatus = "Mode="
-
-        + getEngineModeDisplayName()
-
-        + " enum="
-
-        + juce::String(static_cast<int>(getEngineMode()))
-
-        + " | Loaded "
-
-        + juce::String(static_cast<int>(jsonProfiles.size()))
-
-        + " JSON profiles from "
-
-        + jsonFile.getFullPathName();
+    jsonProfileStatus = makeJsonStatus("OK",
+        "Loaded JSON profiles successfully",
+        static_cast<int>(jsonProfiles.size()));
 
 }
 
