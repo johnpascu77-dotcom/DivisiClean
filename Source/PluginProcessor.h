@@ -145,6 +145,7 @@ public:
 
     void loadJsonProfiles();
     void reloadJsonProfilesFromGui();
+    juce::String getJsonProfilesFileNameForCurrentMode() const;
     juce::File getJsonProfilesFile() const;
 
     void requestMidiPanicAndStateReset();
