@@ -672,20 +672,73 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
     }
 
 
-
     std::vector<PresetProfile> loadedProfiles;
 
     loadedProfiles.reserve(static_cast<size_t>(profilesArray->size()));
 
+    int skippedProfileCount = 0;
+    juce::StringArray validationWarnings;
+
+    const auto addValidationWarning = [&validationWarnings](const juce::String& warning)
+        {
+            if (validationWarnings.size() < 5)
+                validationWarnings.add(warning);
+        };
+
+    const auto hasRequiredProperty = [](const juce::DynamicObject& object,
+        const juce::String& propertyName)
+        {
+            return object.hasProperty(juce::Identifier(propertyName));
+        };
+
+    const auto validateRequiredProfileFields = [&hasRequiredProperty](const juce::DynamicObject& object,
+        juce::String& error)
+        {
+            static const char* requiredFields[] =
+            {
+                "cc31",
+                "name",
+                "profileType",
+                "sourceSelectionMode",
+                "sourceReductionMode",
+                "expectedDivisiMode",
+                "registerWrapMode",
+                "maxVoices",
+                "minNote",
+                "maxNote",
+                "targetNote",
+                "outputTranspose",
+                "useChordWindow",
+                "chordWindowMs",
+                "enforceActiveVoiceLimit"
+            };
+
+            for (const auto* field : requiredFields)
+            {
+                if (!hasRequiredProperty(object, field))
+                {
+                    error = "missing required field '" + juce::String(field) + "'";
+                    return false;
+                }
+            }
+
+            return true;
+        };
 
 
-    for (const auto& profileVar : *profilesArray)
+
+    for (int profileIndex = 0; profileIndex < profilesArray->size(); ++profileIndex)
 
     {
 
-        if (!profileVar.isObject())
+        const auto& profileVar = profilesArray->getReference(profileIndex);
 
+        if (!profileVar.isObject())
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] is not an object");
             continue;
+        }
 
 
 
@@ -694,8 +747,20 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
 
         if (profileObject == nullptr)
-
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] object invalid");
             continue;
+        }
+
+        juce::String validationError;
+
+        if (!validateRequiredProfileFields(*profileObject, validationError))
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] " + validationError);
+            continue;
+        }
 
 
 
@@ -807,9 +872,44 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
 
 
-        if (profile.cc31 >= 0)
+        if (profile.cc31 < 0 || profile.cc31 > 127)
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] cc31 out of range");
+            continue;
+        }
 
-            loadedProfiles.push_back(profile);
+        if (profile.maxVoices < 1 || profile.maxVoices > 64)
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] maxVoices out of range");
+            continue;
+        }
+
+        if (profile.minNote < 0 || profile.minNote > 127
+            || profile.maxNote < 0 || profile.maxNote > 127
+            || profile.targetNote < 0 || profile.targetNote > 127)
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] note range out of MIDI bounds");
+            continue;
+        }
+
+        if (profile.minNote > profile.maxNote)
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] minNote greater than maxNote");
+            continue;
+        }
+
+        if (profile.chordWindowMs < 0.0 || profile.chordWindowMs > 5000.0)
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] chordWindowMs out of range");
+            continue;
+        }
+
+        loadedProfiles.push_back(profile);
 
     }
 
@@ -818,8 +918,15 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
     if (loadedProfiles.empty())
 
     {
+        juce::String message = "No valid JSON profiles loaded, using built-in profiles";
 
-        jsonProfileStatus = makeJsonStatus("ERROR", "No valid JSON profiles loaded, using built-in profiles");
+        if (skippedProfileCount > 0)
+            message << " | Skipped: " << skippedProfileCount;
+
+        if (!validationWarnings.isEmpty())
+            message << " | Warnings: " << validationWarnings.joinIntoString("; ");
+
+        jsonProfileStatus = makeJsonStatus("ERROR", message);
 
         return;
 
@@ -833,8 +940,16 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
 
 
 
+    juce::String successMessage = "Loaded JSON profiles successfully";
+
+    if (skippedProfileCount > 0)
+        successMessage << " | Skipped: " << skippedProfileCount;
+
+    if (!validationWarnings.isEmpty())
+        successMessage << " | Warnings: " << validationWarnings.joinIntoString("; ");
+
     jsonProfileStatus = makeJsonStatus("OK",
-        "Loaded JSON profiles successfully",
+        successMessage,
         static_cast<int>(jsonProfiles.size()));
 
 }
