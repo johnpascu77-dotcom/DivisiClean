@@ -1,7 +1,1944 @@
 {
   "schemaVersion": 1,
   "noteNumbering": "C3=60",
+  "engineSettings": {
+    "enabled": true,
+    "timingMode": "BarLookahead",
+    "quantizeDivisionsPerBar": 16,
+    "minNoteLengthBeats": 0.25,
+    "mergeGapBeats": 0.0625,
+    "outputDelayBars": 1.0,
+    "suppressShortNotes": true,
+    "mergeRepeatedNotes": true,
+    "resetOnTransportStop": true,
+    "resetOnLoopJump": true
+  },
   "profiles": [
+    {
+      "cc31": 1,
+      "name": "3 Fl. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 60,
+      "maxNote": 96,
+      "targetNote": 72,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 60,
+          "maxNote": 84,
+          "targetNote": 72,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 65,
+          "maxNote": 88,
+          "targetNote": 76,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 72,
+          "maxNote": 96,
+          "targetNote": 84,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 2,
+      "name": "2 Ob. & EH (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 48,
+      "maxNote": 81,
+      "targetNote": 58,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 69,
+          "targetNote": 58,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 76,
+          "targetNote": 65,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 81,
+          "targetNote": 69,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 3,
+      "name": "3 Cl. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 40,
+      "maxNote": 79,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 40,
+          "maxNote": 64,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 50,
+          "maxNote": 72,
+          "targetNote": 61,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 57,
+          "maxNote": 79,
+          "targetNote": 67,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 4,
+      "name": "3 Bsn. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 24,
+      "maxNote": 67,
+      "targetNote": 36,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 24,
+          "maxNote": 45,
+          "targetNote": 36,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 36,
+          "maxNote": 58,
+          "targetNote": 46,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 48,
+          "maxNote": 67,
+          "targetNote": 57,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 5,
+      "name": "2 Fl. (2-part)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "TopDown",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 2,
+      "minNote": 55,
+      "maxNote": 84,
+      "targetNote": 72,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 60,
+          "maxNote": 84,
+          "targetNote": 72,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 79,
+          "targetNote": 67,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 6,
+      "name": "2 Ob. (2-part)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "TopDown",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 2,
+      "minNote": 52,
+      "maxNote": 79,
+      "targetNote": 67,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 58,
+          "maxNote": 79,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 52,
+          "maxNote": 74,
+          "targetNote": 62,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 7,
+      "name": "2 Cl.",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "TopDown",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 2,
+      "minNote": 43,
+      "maxNote": 76,
+      "targetNote": 64,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 50,
+          "maxNote": 76,
+          "targetNote": 64,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 43,
+          "maxNote": 69,
+          "targetNote": 56,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 8,
+      "name": "2 Bsn.",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "TopDown",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 2,
+      "minNote": 36,
+      "maxNote": 67,
+      "targetNote": 57,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 67,
+          "targetNote": 57,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 36,
+          "maxNote": 58,
+          "targetNote": 46,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 9,
+      "name": "2 Fl. unison 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 53,
+      "maxNote": 74,
+      "targetNote": 62,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 10,
+      "name": "2 Ob. unison 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 67,
+      "targetNote": 58,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 11,
+      "name": "2 Cl. unison 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 45,
+      "maxNote": 69,
+      "targetNote": 57,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 12,
+      "name": "2 Bsn. unison 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 36,
+      "maxNote": 58,
+      "targetNote": 46,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 13,
+      "name": "3 Fl. unison 8va+15me",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 67,
+      "targetNote": 58,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 14,
+      "name": "Ob. & EH. unison 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 67,
+      "targetNote": 58,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 15,
+      "name": "3 Cl. unison 8va+15me",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 38,
+      "maxNote": 57,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 16,
+      "name": "3 Bsn. unison 8va+15me",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 36,
+      "maxNote": 55,
+      "targetNote": 45,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 17,
+      "name": "3 Fl. (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 55,
+      "maxNote": 81,
+      "targetNote": 62,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 55,
+          "maxNote": 69,
+          "targetNote": 62,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 61,
+          "maxNote": 75,
+          "targetNote": 68,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 67,
+          "maxNote": 81,
+          "targetNote": 74,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 18,
+      "name": "3 Ob. (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 48,
+      "maxNote": 74,
+      "targetNote": 55,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 62,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 54,
+          "maxNote": 68,
+          "targetNote": 61,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 74,
+          "targetNote": 67,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 19,
+      "name": "3 Cl. (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 43,
+      "maxNote": 73,
+      "targetNote": 51,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 43,
+          "maxNote": 59,
+          "targetNote": 51,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 50,
+          "maxNote": 66,
+          "targetNote": 58,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 57,
+          "maxNote": 73,
+          "targetNote": 65,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 20,
+      "name": "3 Bsn. (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 36,
+      "maxNote": 66,
+      "targetNote": 44,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 36,
+          "maxNote": 52,
+          "targetNote": 44,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 43,
+          "maxNote": 59,
+          "targetNote": 51,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 50,
+          "maxNote": 66,
+          "targetNote": 58,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 21,
+      "name": "3 Fl. & 3 Ob. 8vb (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 50,
+      "maxNote": 77,
+      "targetNote": 57,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 50,
+          "maxNote": 65,
+          "targetNote": 57,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 56,
+          "maxNote": 71,
+          "targetNote": 63,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 62,
+          "maxNote": 77,
+          "targetNote": 69,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 22,
+      "name": "3 Fl. & 3 Cl. 8vb (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 48,
+      "maxNote": 76,
+      "targetNote": 56,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 64,
+          "targetNote": 56,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 54,
+          "maxNote": 70,
+          "targetNote": 62,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 68,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 23,
+      "name": "3 Cl. & 3 Bsn. 8vb (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 45,
+      "maxNote": 69,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 45,
+          "maxNote": 59,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 50,
+          "maxNote": 64,
+          "targetNote": 57,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 55,
+          "maxNote": 69,
+          "targetNote": 62,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 24,
+      "name": "3 Cl. & 3 Bsn. (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 43,
+      "maxNote": 73,
+      "targetNote": 51,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 43,
+          "maxNote": 59,
+          "targetNote": 51,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 50,
+          "maxNote": 66,
+          "targetNote": 58,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 57,
+          "maxNote": 73,
+          "targetNote": 65,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 25,
+      "name": "2 Fl. & 2 Cl. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 48,
+      "maxNote": 80,
+      "targetNote": 56,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 64,
+          "targetNote": 56,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 53,
+          "maxNote": 69,
+          "targetNote": 61,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 58,
+          "maxNote": 74,
+          "targetNote": 66,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 63,
+          "maxNote": 80,
+          "targetNote": 72,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 26,
+      "name": "2 Fl. & 2 Cl. (interlocked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 52,
+      "maxNote": 79,
+      "targetNote": 59,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 52,
+          "maxNote": 66,
+          "targetNote": 59,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 56,
+          "maxNote": 70,
+          "targetNote": 63,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 74,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 64,
+          "maxNote": 79,
+          "targetNote": 71,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 27,
+      "name": "2 Fl. & 2 Ob. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 55,
+      "maxNote": 82,
+      "targetNote": 62,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 55,
+          "maxNote": 69,
+          "targetNote": 62,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 59,
+          "maxNote": 73,
+          "targetNote": 66,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 63,
+          "maxNote": 77,
+          "targetNote": 70,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 67,
+          "maxNote": 82,
+          "targetNote": 75,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 28,
+      "name": "2 Fl. & 2 Ob. (interlocked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 57,
+      "maxNote": 81,
+      "targetNote": 64,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 57,
+          "maxNote": 71,
+          "targetNote": 64,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 60,
+          "maxNote": 74,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 63,
+          "maxNote": 77,
+          "targetNote": 70,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 66,
+          "maxNote": 81,
+          "targetNote": 74,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 29,
+      "name": "2 Ob. & 2 Cl. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 50,
+      "maxNote": 77,
+      "targetNote": 57,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 50,
+          "maxNote": 64,
+          "targetNote": 57,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 54,
+          "maxNote": 68,
+          "targetNote": 61,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 58,
+          "maxNote": 72,
+          "targetNote": 65,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 62,
+          "maxNote": 77,
+          "targetNote": 70,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 30,
+      "name": "2 Ob. & 2 Cl. (interlocked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 53,
+      "maxNote": 76,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 53,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 56,
+          "maxNote": 70,
+          "targetNote": 63,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 59,
+          "maxNote": 73,
+          "targetNote": 66,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 62,
+          "maxNote": 76,
+          "targetNote": 69,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 31,
+      "name": "Ob. & EH. & 2 Bsn. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 40,
+      "maxNote": 72,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 40,
+          "maxNote": 55,
+          "targetNote": 48,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 45,
+          "maxNote": 60,
+          "targetNote": 53,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 50,
+          "maxNote": 66,
+          "targetNote": 58,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 55,
+          "maxNote": 72,
+          "targetNote": 64,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 32,
+      "name": "2 Ob. & 2 Bsn. (interlocked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 50,
+      "maxNote": 76,
+      "targetNote": 57,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 50,
+          "maxNote": 64,
+          "targetNote": 57,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 54,
+          "maxNote": 68,
+          "targetNote": 61,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 57,
+          "maxNote": 72,
+          "targetNote": 65,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 61,
+          "maxNote": 76,
+          "targetNote": 69,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 33,
+      "name": "2 Cl. & 2 Bsn. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 40,
+      "maxNote": 70,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 40,
+          "maxNote": 55,
+          "targetNote": 48,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 45,
+          "maxNote": 60,
+          "targetNote": 53,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 50,
+          "maxNote": 65,
+          "targetNote": 58,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 55,
+          "maxNote": 70,
+          "targetNote": 63,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 34,
+      "name": "2 Cl. & 2 Bsn. (interlocked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 43,
+      "maxNote": 67,
+      "targetNote": 50,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 43,
+          "maxNote": 57,
+          "targetNote": 50,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 47,
+          "maxNote": 61,
+          "targetNote": 54,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 50,
+          "maxNote": 64,
+          "targetNote": 57,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 53,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 35,
+      "name": "3 Cl. & 3 Bsn. unison",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 43,
+      "maxNote": 60,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 36,
+      "name": "Woodwind Choir unison",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 67,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 37,
+      "name": "Woodwind Choir 01",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 48,
+      "maxNote": 76,
+      "targetNote": 55,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 62,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 53,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 57,
+          "maxNote": 72,
+          "targetNote": 65,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 69,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 38,
+      "name": "Woodwind Choir 02",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 50,
+      "maxNote": 76,
+      "targetNote": 55,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 50,
+          "maxNote": 64,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 69,
+          "targetNote": 62,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 67,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 39,
+      "name": "Woodwind Choir 03",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 48,
+      "maxNote": 79,
+      "targetNote": 55,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 64,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 53,
+          "maxNote": 69,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 57,
+          "maxNote": 74,
+          "targetNote": 65,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 62,
+          "maxNote": 79,
+          "targetNote": 70,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 40,
+      "name": "Woodwind Choir 04",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "Spread",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 43,
+      "maxNote": 79,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 43,
+          "maxNote": 60,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 50,
+          "maxNote": 67,
+          "targetNote": 58,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 55,
+          "maxNote": 72,
+          "targetNote": 64,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 60,
+          "maxNote": 79,
+          "targetNote": 69,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 41,
+      "name": "4 Hr. (close)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 43,
+      "maxNote": 72,
+      "targetNote": 50,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 43,
+          "maxNote": 57,
+          "targetNote": 50,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 47,
+          "maxNote": 62,
+          "targetNote": 54,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 50,
+          "maxNote": 67,
+          "targetNote": 58,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 53,
+          "maxNote": 72,
+          "targetNote": 62,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 42,
+      "name": "4 Tp. (close)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 55,
+      "maxNote": 79,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 55,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 58,
+          "maxNote": 70,
+          "targetNote": 63,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 62,
+          "maxNote": 74,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 65,
+          "maxNote": 79,
+          "targetNote": 72,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 43,
+      "name": "4 Tb. (close)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 36,
+      "maxNote": 64,
+      "targetNote": 43,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 36,
+          "maxNote": 52,
+          "targetNote": 43,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 40,
+          "maxNote": 56,
+          "targetNote": 48,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 43,
+          "maxNote": 60,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 47,
+          "maxNote": 64,
+          "targetNote": 55,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 44,
+      "name": "BTb. + Tuba (2-part)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 2,
+      "minNote": 28,
+      "maxNote": 57,
+      "targetNote": 36,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 28,
+          "maxNote": 48,
+          "targetNote": 36,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 36,
+          "maxNote": 57,
+          "targetNote": 45,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 45,
+      "name": "Horn Solo",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 43,
+      "maxNote": 72,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 46,
+      "name": "Trumpet Solo",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 55,
+      "maxNote": 79,
+      "targetNote": 67,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 47,
+      "name": "Trombone Solo",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 40,
+      "maxNote": 64,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 48,
+      "name": "Tuba Solo",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 28,
+      "maxNote": 52,
+      "targetNote": 40,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 49,
+      "name": "4 Hr. (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 43,
+      "maxNote": 67,
+      "targetNote": 50,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 43,
+          "maxNote": 57,
+          "targetNote": 50,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 48,
+          "maxNote": 62,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 52,
+          "maxNote": 67,
+          "targetNote": 60,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 50,
+      "name": "4 Tp. (open)",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 55,
+      "maxNote": 67,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 51,
+      "name": "3 Tb. (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 40,
+      "maxNote": 64,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 40,
+          "maxNote": 55,
+          "targetNote": 48,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 45,
+          "maxNote": 60,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 48,
+          "maxNote": 64,
+          "targetNote": 55,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 52,
+      "name": "4 Tp. & 4 Tb. (close 8va)",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 67,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 53,
+      "name": "4 Hr. (dbl. lead)",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 53,
+      "maxNote": 72,
+      "targetNote": 64,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 54,
+      "name": "4 Tp. (dbl. lead)",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 60,
+      "maxNote": 79,
+      "targetNote": 72,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 55,
+      "name": "4 Tb. (dbl. lead)",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 43,
+      "maxNote": 64,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 56,
+      "name": "4 Hr. & 4 Tb. & Tuba (open)",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 55,
+      "maxNote": 72,
+      "targetNote": 64,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 57,
+      "name": "Brass Choir 01",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 72,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 58,
+      "name": "Brass Choir 02",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 72,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 59,
+      "name": "Brass Choir 03",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 55,
+      "maxNote": 72,
+      "targetNote": 64,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 60,
+      "name": "Low Brass unison",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 40,
+      "maxNote": 60,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
     {
       "cc31": 61,
       "name": "Vln1 Vln2 2-part",
@@ -16,7 +1953,7 @@
       "targetNote": 76,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -49,7 +1986,7 @@
       "targetNote": 69,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -89,7 +2026,7 @@
       "targetNote": 57,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -129,7 +2066,7 @@
       "targetNote": 52,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -162,7 +2099,7 @@
       "targetNote": 79,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -209,7 +2146,7 @@
       "targetNote": 76,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -256,7 +2193,7 @@
       "targetNote": 67,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -303,7 +2240,7 @@
       "targetNote": 60,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -350,7 +2287,7 @@
       "targetNote": 74,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true
     },
     {
@@ -367,7 +2304,7 @@
       "targetNote": 48,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true
     },
     {
@@ -384,7 +2321,7 @@
       "targetNote": 52,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true
     },
     {
@@ -401,7 +2338,7 @@
       "targetNote": 50,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true
     },
     {
@@ -418,7 +2355,7 @@
       "targetNote": 67,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -472,7 +2409,7 @@
       "targetNote": 72,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -512,7 +2449,7 @@
       "targetNote": 72,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -552,7 +2489,7 @@
       "targetNote": 60,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -592,7 +2529,7 @@
       "targetNote": 64,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -639,7 +2576,7 @@
       "targetNote": 64,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -686,7 +2623,7 @@
       "targetNote": 60,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -726,7 +2663,7 @@
       "targetNote": 60,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 40,
+      "chordWindowMs": 40.0,
       "enforceActiveVoiceLimit": true,
       "voiceSourceRanges": [
         {
@@ -734,7 +2671,7 @@
           "minNote": 40,
           "maxNote": 60,
           "targetNote": 48,
-          "outputTranspose": -12
+          "outputTranspose": 0
         },
         {
           "rank": 1,
@@ -748,9 +2685,128 @@
           "minNote": 60,
           "maxNote": 79,
           "targetNote": 67,
-          "outputTranspose": -12
+          "outputTranspose": 0
         }
       ]
+    },
+    {
+      "cc31": 81,
+      "name": "Vln. 1 + Vln. 2 + 2 Fl. unison 8va*",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 53,
+      "maxNote": 74,
+      "targetNote": 62,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 82,
+      "name": "Vln. 1 + Ob. + Tp. unison 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 58,
+      "maxNote": 76,
+      "targetNote": 67,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 83,
+      "name": "Bsn. + Vc. unison*",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 36,
+      "maxNote": 60,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 84,
+      "name": "Cbsn. + Tuba + Vc. + DB unison*",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 36,
+      "maxNote": 55,
+      "targetNote": 43,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 85,
+      "name": "Tutti Hero unison*",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 60,
+      "maxNote": 84,
+      "targetNote": 72,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": false
+    },
+    {
+      "cc31": 86,
+      "name": "Woodwinds + Strings unison 8va + 15...",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 72,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 87,
+      "name": "Strings + Horns unison 8va*",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 48,
+      "maxNote": 72,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
     },
     {
       "cc31": 88,
@@ -766,8 +2822,479 @@
       "targetNote": 48,
       "outputTranspose": 0,
       "useChordWindow": true,
-      "chordWindowMs": 250,
+      "chordWindowMs": 250.0,
       "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 89,
+      "name": "Strings & 2 Fl. & 2 Cl. (stacked)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 43,
+      "maxNote": 84,
+      "targetNote": 55,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 43,
+          "maxNote": 67,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 50,
+          "maxNote": 74,
+          "targetNote": 62,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 55,
+          "maxNote": 79,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 60,
+          "maxNote": 84,
+          "targetNote": 72,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 90,
+      "name": "Strings (dbl. lead) & 3 Fl. (stacked)*",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 50,
+      "maxNote": 84,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 50,
+          "maxNote": 74,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 55,
+          "maxNote": 79,
+          "targetNote": 67,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 60,
+          "maxNote": 84,
+          "targetNote": 72,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 91,
+      "name": "Strings + Horns (dbl. lead)*",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 48,
+      "maxNote": 82,
+      "targetNote": 60,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 72,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 53,
+          "maxNote": 77,
+          "targetNote": 65,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 58,
+          "maxNote": 82,
+          "targetNote": 70,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 92,
+      "name": "Strings (open) & Horns (dbl. lead)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 48,
+      "maxNote": 79,
+      "targetNote": 55,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 67,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 53,
+          "maxNote": 74,
+          "targetNote": 62,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 58,
+          "maxNote": 79,
+          "targetNote": 67,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 93,
+      "name": "Tutti (4-part)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 4,
+      "minNote": 48,
+      "maxNote": 76,
+      "targetNote": 55,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 64,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 52,
+          "maxNote": 68,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 55,
+          "maxNote": 72,
+          "targetNote": 64,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 3,
+          "minNote": 60,
+          "maxNote": 76,
+          "targetNote": 67,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 94,
+      "name": "Vln. 1 & 3 Fl. & 3 Cl. unison 8va",
+      "profileType": "SingleSource",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerNoteNearTarget",
+      "maxVoices": 1,
+      "minNote": 72,
+      "maxNote": 96,
+      "targetNote": 84,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true
+    },
+    {
+      "cc31": 95,
+      "name": "3 Fl. + 3 Cl",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Highest",
+      "sourceReductionMode": "HighestN",
+      "expectedDivisiMode": "FillVoices",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 60,
+      "maxNote": 91,
+      "targetNote": 72,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 60,
+          "maxNote": 84,
+          "targetNote": 72,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 64,
+          "maxNote": 88,
+          "targetNote": 76,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 67,
+          "maxNote": 91,
+          "targetNote": 79,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 96,
+      "name": "Strings + 3 Bsn. (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 48,
+      "maxNote": 72,
+      "targetNote": 55,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 48,
+          "maxNote": 64,
+          "targetNote": 55,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 52,
+          "maxNote": 68,
+          "targetNote": 60,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 55,
+          "maxNote": 72,
+          "targetNote": 64,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 97,
+      "name": "Dramatic Tutti (3-part)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 36,
+      "maxNote": 67,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 36,
+          "maxNote": 60,
+          "targetNote": 48,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 40,
+          "maxNote": 64,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 43,
+          "maxNote": 67,
+          "targetNote": 55,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 98,
+      "name": "Low Tutti Chord (3-part)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 40,
+      "maxNote": 70,
+      "targetNote": 48,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 40,
+          "maxNote": 60,
+          "targetNote": 48,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 45,
+          "maxNote": 65,
+          "targetNote": 53,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 50,
+          "maxNote": 70,
+          "targetNote": 58,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 99,
+      "name": "Low Strings & Brass (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 45,
+      "maxNote": 74,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 45,
+          "maxNote": 64,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 50,
+          "maxNote": 69,
+          "targetNote": 57,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 55,
+          "maxNote": 74,
+          "targetNote": 62,
+          "outputTranspose": 0
+        }
+      ]
+    },
+    {
+      "cc31": 100,
+      "name": "Low Brass + Woodwinds (open)",
+      "profileType": "BlockVoicing",
+      "sourceSelectionMode": "Lowest",
+      "sourceReductionMode": "LowestN",
+      "expectedDivisiMode": "BottomUp",
+      "registerWrapMode": "PerVoiceRange",
+      "maxVoices": 3,
+      "minNote": 45,
+      "maxNote": 74,
+      "targetNote": 52,
+      "outputTranspose": 0,
+      "useChordWindow": true,
+      "chordWindowMs": 40.0,
+      "enforceActiveVoiceLimit": true,
+      "voiceSourceRanges": [
+        {
+          "rank": 0,
+          "minNote": 45,
+          "maxNote": 64,
+          "targetNote": 52,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 1,
+          "minNote": 50,
+          "maxNote": 69,
+          "targetNote": 57,
+          "outputTranspose": 0
+        },
+        {
+          "rank": 2,
+          "minNote": 55,
+          "maxNote": 74,
+          "targetNote": 62,
+          "outputTranspose": 0
+        }
+      ]
     }
   ]
 }
