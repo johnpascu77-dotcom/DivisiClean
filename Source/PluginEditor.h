@@ -25,10 +25,11 @@ private:
     juce::Label reductionModeLabel;
     juce::Label divisiModeLabel;
     juce::Label wrapModeLabel;
+    juce::Label engineStatusLabel;
     juce::Label settingsLabel;
     juce::Label pendingLabel;
     juce::Label jsonStatusLabel;
     juce::TextButton reloadJsonButton;
-
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DivisiCleanAudioProcessorEditor)
 };

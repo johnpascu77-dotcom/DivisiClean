@@ -13,6 +13,8 @@
 #include <vector>
 #include <algorithm>
 #include <atomic>
+#include <cmath>
+#include <map>
 
 //==============================================================================
 /**
@@ -56,6 +58,12 @@ enum class RegisterWrapMode
     PerVoiceRange
 };
 
+enum class TimingMode
+{
+    ChordWindow,
+    BarLookahead
+};
+
 struct VoiceSourceRange
 {
     int rank = 0;
@@ -87,6 +95,27 @@ struct PresetProfile
     bool enforceActiveVoiceLimit = false;
 
     std::vector<VoiceSourceRange> voiceSourceRanges;
+};
+
+struct EngineTimingSettings
+{
+    TimingMode timingMode = TimingMode::ChordWindow;
+
+    // BarLookahead means:
+    // - collect MIDI for the current bar
+    // - clean/quantize it
+    // - emit it one bar later
+    bool enabled = false;
+
+    int quantizeDivisionsPerBar = 16;     // 1/16 grid in 4/4
+    double minNoteLengthBeats = 0.0625;   // 1/64 note
+    double mergeGapBeats = 0.03125;       // 1/128 note
+    double outputDelayBars = 1.0;
+
+    bool suppressShortNotes = true;
+    bool mergeRepeatedNotes = true;
+    bool resetOnTransportStop = true;
+    bool resetOnLoopJump = true;
 };
 
 class DivisiCleanAudioProcessor  : public juce::AudioProcessor
@@ -150,6 +179,11 @@ public:
     bool getActiveProfileUsesChordWindow() const;
     bool getActiveProfileEnforcesActiveVoiceLimit() const;
     int getPendingNoteCount() const;
+    juce::String getEngineTimingModeName() const;
+    juce::String getEngineStatusText() const;
+    int getBarLookaheadBufferedNoteCount() const;
+    int getBarLookaheadScheduledEventCount() const;
+    juce::String getBarLookaheadDebugText() const;
 
 private:
     //==============================================================================
@@ -160,6 +194,33 @@ private:
         int velocity = 0;
         double ageMs = 0.0;
     };
+
+    struct BarInputNote
+    {
+        int channel = 1;
+        int inputNote = 0;
+        int velocity = 1;
+        double startPpq = 0.0;
+        double endPpq = 0.0;
+        bool hasEnd = false;
+
+        int cc31 = -1;
+    };
+
+    struct ScheduledMidiEvent
+    {
+        juce::MidiMessage message;
+        double targetPpq = 0.0;
+    };
+
+    EngineTimingSettings engineSettings;
+
+    std::vector<BarInputNote> barInputNotes;
+    std::vector<ScheduledMidiEvent> scheduledLookaheadEvents;
+
+    double activeBarStartPpq = -1.0;
+    double lastSeenPpq = -1.0;
+    bool lastTransportPlaying = false;
 
     std::vector<PresetProfile> jsonProfiles;
     bool jsonProfilesLoaded = false;
@@ -199,6 +260,27 @@ private:
     SourceReductionMode sourceReductionModeFromString(const juce::String& text) const;
     ExpectedDivisiMode expectedDivisiModeFromString(const juce::String& text) const;
     RegisterWrapMode registerWrapModeFromString(const juce::String& text) const;
+    TimingMode timingModeFromString(const juce::String& text) const;
+    void loadEngineSettingsFromJsonRoot(const juce::DynamicObject& root);
+
+    void resetBarLookaheadState();
+    void finaliseCompletedBar(double completedBarStartPpq, double barLengthBeats);
+    void processBarLookaheadBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages);
+
+    void emitScheduledEventsForBlock(juce::MidiBuffer& outputMidi,
+        double blockStartPpq,
+        double blockEndPpq,
+        int numSamples);
+
+    bool getTransportPpqInfo(double& ppqPosition,
+        double& bpm,
+        double& timeSigNumerator,
+        double& timeSigDenominator,
+        bool& isPlaying) const;
+
+    double getBarLengthBeats(double numerator, double denominator) const;
+    double getBarStartPpq(double ppqPosition, double barLengthBeats) const;
+    double quantizePpqToGrid(double ppq, double barStartPpq, double barLengthBeats) const;
 
     VoiceSourceRange getVoiceSourceRangeForProfileRank(const PresetProfile& profile,
         int rank,

@@ -8,6 +8,9 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <map>
+#include <cmath>
+#include <algorithm>
 
 //==============================================================================
 DivisiCleanAudioProcessor::DivisiCleanAudioProcessor()
@@ -121,6 +124,77 @@ RegisterWrapMode DivisiCleanAudioProcessor::registerWrapModeFromString(const juc
     return RegisterWrapMode::PerNoteNearTarget;
 }
 
+TimingMode DivisiCleanAudioProcessor::timingModeFromString(const juce::String& text) const
+{
+    const auto t = normaliseEnumText(text);
+
+    if (t == "barlookahead")
+        return TimingMode::BarLookahead;
+
+    return TimingMode::ChordWindow;
+}
+
+void DivisiCleanAudioProcessor::loadEngineSettingsFromJsonRoot(const juce::DynamicObject& root)
+{
+    engineSettings = EngineTimingSettings{};
+
+    const auto engineVar = root.getProperty("engineSettings");
+
+    if (!engineVar.isObject())
+        return;
+
+    const auto* engineObject = engineVar.getDynamicObject();
+
+    if (engineObject == nullptr)
+        return;
+
+    engineSettings.timingMode =
+        timingModeFromString(engineObject->getProperty("timingMode").toString());
+
+    engineSettings.enabled =
+        static_cast<bool>(engineObject->getProperty("enabled"));
+
+    const auto quantizeVar = engineObject->getProperty("quantizeDivisionsPerBar");
+    if (!quantizeVar.isVoid())
+        engineSettings.quantizeDivisionsPerBar =
+            juce::jlimit(1, 128, static_cast<int>(quantizeVar));
+
+    const auto minLenVar = engineObject->getProperty("minNoteLengthBeats");
+    if (!minLenVar.isVoid())
+        engineSettings.minNoteLengthBeats =
+            juce::jlimit(0.0, 4.0, static_cast<double>(minLenVar));
+
+    const auto mergeGapVar = engineObject->getProperty("mergeGapBeats");
+    if (!mergeGapVar.isVoid())
+        engineSettings.mergeGapBeats =
+            juce::jlimit(0.0, 4.0, static_cast<double>(mergeGapVar));
+
+    const auto delayVar = engineObject->getProperty("outputDelayBars");
+    if (!delayVar.isVoid())
+        engineSettings.outputDelayBars =
+            juce::jlimit(0.0, 8.0, static_cast<double>(delayVar));
+
+    const auto suppressVar = engineObject->getProperty("suppressShortNotes");
+    if (!suppressVar.isVoid())
+        engineSettings.suppressShortNotes =
+            static_cast<bool>(suppressVar);
+
+    const auto mergeVar = engineObject->getProperty("mergeRepeatedNotes");
+    if (!mergeVar.isVoid())
+        engineSettings.mergeRepeatedNotes =
+            static_cast<bool>(mergeVar);
+
+    const auto stopVar = engineObject->getProperty("resetOnTransportStop");
+    if (!stopVar.isVoid())
+        engineSettings.resetOnTransportStop =
+            static_cast<bool>(stopVar);
+
+    const auto loopVar = engineObject->getProperty("resetOnLoopJump");
+    if (!loopVar.isVoid())
+        engineSettings.resetOnLoopJump =
+            static_cast<bool>(loopVar);
+}
+
 void DivisiCleanAudioProcessor::loadJsonProfiles()
 {
     jsonProfiles.clear();
@@ -164,6 +238,8 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
         jsonProfileStatus = "JSON root object invalid, using built-in profiles";
         return;
     }
+
+    loadEngineSettingsFromJsonRoot(*root);
 
     const auto profilesVar = root->getProperty("profiles");
 
@@ -265,6 +341,643 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
         + juce::String(static_cast<int>(jsonProfiles.size()))
         + " JSON profiles from "
         + jsonFile.getFileName();
+}
+
+void DivisiCleanAudioProcessor::resetBarLookaheadState()
+{
+    barInputNotes.clear();
+    scheduledLookaheadEvents.clear();
+
+    activeBarStartPpq = -1.0;
+    lastSeenPpq = -1.0;
+    lastTransportPlaying = false;
+
+    pendingNotes.clear();
+    activeNoteMap.fill(-1);
+}
+
+bool DivisiCleanAudioProcessor::getTransportPpqInfo(double& ppqPosition,
+    double& bpm,
+    double& timeSigNumerator,
+    double& timeSigDenominator,
+    bool& isPlaying) const
+{
+    ppqPosition = 0.0;
+    bpm = 120.0;
+    timeSigNumerator = 4.0;
+    timeSigDenominator = 4.0;
+    isPlaying = false;
+
+    auto* ph = getPlayHead();
+
+    if (ph == nullptr)
+        return false;
+
+    auto position = ph->getPosition();
+
+    if (!position)
+        return false;
+
+    auto ppq = position->getPpqPosition();
+
+    if (ppq)
+        ppqPosition = *ppq;
+
+    auto tempo = position->getBpm();
+
+    if (tempo)
+        bpm = *tempo;
+
+    auto sig = position->getTimeSignature();
+
+    if (sig)
+    {
+        timeSigNumerator = static_cast<double>(sig->numerator);
+        timeSigDenominator = static_cast<double>(sig->denominator);
+    }
+
+    isPlaying = position->getIsPlaying();
+
+    return true;
+}
+
+double DivisiCleanAudioProcessor::getBarLengthBeats(double numerator, double denominator) const
+{
+    if (numerator <= 0.0 || denominator <= 0.0)
+        return 4.0;
+
+    return numerator * (4.0 / denominator);
+}
+
+double DivisiCleanAudioProcessor::getBarStartPpq(double ppqPosition, double barLengthBeats) const
+{
+    if (barLengthBeats <= 0.0)
+        return 0.0;
+
+    return std::floor(ppqPosition / barLengthBeats) * barLengthBeats;
+}
+
+double DivisiCleanAudioProcessor::quantizePpqToGrid(double ppq,
+    double barStartPpq,
+    double barLengthBeats) const
+{
+    const int divisions = juce::jlimit(1, 128, engineSettings.quantizeDivisionsPerBar);
+
+    const double gridSize = barLengthBeats / static_cast<double>(divisions);
+    const double local = ppq - barStartPpq;
+
+    const double quantizedLocal = std::round(local / gridSize) * gridSize;
+
+    return barStartPpq + juce::jlimit(0.0, barLengthBeats, quantizedLocal);
+}
+
+void DivisiCleanAudioProcessor::finaliseCompletedBar(double completedBarStartPpq,
+    double barLengthBeats)
+{
+    std::vector<BarInputNote> completedNotes;
+
+    for (auto note : barInputNotes)
+    {
+        if (note.startPpq >= completedBarStartPpq
+            && note.startPpq < completedBarStartPpq + barLengthBeats)
+        {
+            if (!note.hasEnd)
+            {
+                note.endPpq = completedBarStartPpq + barLengthBeats;
+                note.hasEnd = true;
+            }
+
+            completedNotes.push_back(note);
+        }
+    }
+
+    barInputNotes.erase(
+        std::remove_if(barInputNotes.begin(), barInputNotes.end(),
+            [completedBarStartPpq, barLengthBeats](const BarInputNote& note)
+            {
+                return note.startPpq >= completedBarStartPpq
+                    && note.startPpq < completedBarStartPpq + barLengthBeats;
+            }),
+        barInputNotes.end());
+
+    if (completedNotes.empty())
+        return;
+
+    // Quantize note starts/ends first.
+    for (auto& note : completedNotes)
+    {
+        note.startPpq = quantizePpqToGrid(note.startPpq,
+            completedBarStartPpq,
+            barLengthBeats);
+
+        note.endPpq = quantizePpqToGrid(note.endPpq,
+            completedBarStartPpq,
+            barLengthBeats);
+
+        if (note.endPpq <= note.startPpq)
+            note.endPpq = note.startPpq + engineSettings.minNoteLengthBeats;
+    }
+
+    if (engineSettings.suppressShortNotes)
+    {
+        completedNotes.erase(
+            std::remove_if(completedNotes.begin(), completedNotes.end(),
+                [this](const BarInputNote& note)
+                {
+                    return (note.endPpq - note.startPpq) < engineSettings.minNoteLengthBeats;
+                }),
+            completedNotes.end());
+    }
+
+    if (completedNotes.empty())
+        return;
+
+    const double outputOffset = barLengthBeats * engineSettings.outputDelayBars;
+
+    // Small musical delay added to notes after the CC31 preset switch.
+    // This gives Divisimate a little time to activate the new preset before notes arrive.
+    // At 120 BPM:
+    //   0.01 beats ≈ 5 ms
+    //   0.02 beats ≈ 10 ms
+    //   0.04 beats ≈ 20 ms
+    //
+    // Start conservatively with 0.02. If Divisimate still switches late, try 0.04.
+    const double presetLeadBeats = 0.02;
+
+    // Group completed notes by the CC31/profile that was active when each note-on arrived.
+    // This prevents later CC31 changes from reprocessing old buffered notes with the wrong profile.
+    std::map<int, std::vector<BarInputNote>> notesByCC31;
+
+    for (const auto& note : completedNotes)
+        notesByCC31[note.cc31].push_back(note);
+
+    auto scheduleCC31AtPpq = [this](int cc31, double targetPpq)
+        {
+            if (cc31 < 0)
+                return;
+
+            scheduledLookaheadEvents.push_back(
+                {
+                    juce::MidiMessage::controllerEvent(
+                        1,
+                        31,
+                        juce::jlimit(0, 127, cc31)),
+                    targetPpq
+                });
+        };
+
+    auto scheduleNotePair = [this, outputOffset, presetLeadBeats](int channel,
+        int outputNote,
+        int velocity,
+        double startPpq,
+        double endPpq)
+        {
+            const auto noteOn = juce::MidiMessage::noteOn(channel,
+                juce::jlimit(0, 127, outputNote),
+                static_cast<juce::uint8>(juce::jlimit(1, 127, velocity)));
+
+            const auto noteOff = juce::MidiMessage::noteOff(channel,
+                juce::jlimit(0, 127, outputNote));
+
+            // Notes are nudged slightly after the CC31 for their profile.
+            // This gives Divisimate time to switch presets before note-ons arrive.
+            scheduledLookaheadEvents.push_back(
+                {
+                    noteOn,
+                    startPpq + outputOffset + presetLeadBeats
+                });
+
+            scheduledLookaheadEvents.push_back(
+                {
+                    noteOff,
+                    endPpq + outputOffset + presetLeadBeats
+                });
+        };
+
+    for (auto& ccPair : notesByCC31)
+    {
+        const int cc31ForThisGroup = ccPair.first;
+        auto& notesForThisProfile = ccPair.second;
+
+        if (notesForThisProfile.empty())
+            continue;
+
+        const auto currentProfile = getProfileForCC31(cc31ForThisGroup);
+
+        // Emit this group's CC31 at the first note position of this group,
+        // not blindly at the bar start.
+        //
+        // This avoids multiple different CC31 values fighting at the exact same
+        // output bar-start PPQ.
+        double firstNoteStartPpq = notesForThisProfile.front().startPpq;
+
+        for (const auto& note : notesForThisProfile)
+            firstNoteStartPpq = std::min(firstNoteStartPpq, note.startPpq);
+
+        scheduleCC31AtPpq(cc31ForThisGroup, firstNoteStartPpq + outputOffset);
+
+        if (currentProfile.type == ProfileType::PassThrough)
+        {
+            // Current policy:
+            // In BarLookahead mode, PassThrough-profile notes are not emitted.
+            //
+            // This preserves the existing behavior. If needed later, this can be changed
+            // so PassThrough notes are delayed and re-emitted unchanged.
+            continue;
+        }
+
+        // Group notes by quantized onset within this CC31/profile group.
+        std::map<double, std::vector<BarInputNote>> onsetGroups;
+
+        for (const auto& note : notesForThisProfile)
+            onsetGroups[note.startPpq].push_back(note);
+
+        for (auto& groupPair : onsetGroups)
+        {
+            auto& groupNotes = groupPair.second;
+
+            if (groupNotes.empty())
+                continue;
+
+            std::sort(groupNotes.begin(), groupNotes.end(),
+                [](const BarInputNote& a, const BarInputNote& b)
+                {
+                    if (a.inputNote == b.inputNote)
+                        return a.channel < b.channel;
+
+                    return a.inputNote < b.inputNote;
+                });
+
+            std::vector<int> noteNumbers;
+            noteNumbers.reserve(groupNotes.size());
+
+            for (const auto& note : groupNotes)
+                noteNumbers.push_back(note.inputNote);
+
+            if (currentProfile.type == ProfileType::SingleSource)
+            {
+                const int selectedIndex =
+                    chooseSingleSourceIndexFromNotes(noteNumbers, currentProfile);
+
+                if (selectedIndex >= 0
+                    && selectedIndex < static_cast<int>(groupNotes.size()))
+                {
+                    const auto& selected = groupNotes[(size_t)selectedIndex];
+
+                    int outputNote = wrapNoteNearTarget(selected.inputNote,
+                        currentProfile.minNote,
+                        currentProfile.maxNote,
+                        currentProfile.targetNote);
+
+                    outputNote = applyOutputTranspose(outputNote,
+                        currentProfile.outputTranspose);
+
+                    scheduleNotePair(selected.channel,
+                        outputNote,
+                        selected.velocity,
+                        selected.startPpq,
+                        selected.endPpq);
+                }
+
+                continue;
+            }
+
+            if (currentProfile.type == ProfileType::BlockVoicing)
+            {
+                auto selectedIndices =
+                    chooseBlockVoicingIndicesFromNotes(noteNumbers, currentProfile);
+
+                if (currentProfile.registerWrapMode == RegisterWrapMode::PerVoiceRange)
+                {
+                    std::sort(selectedIndices.begin(), selectedIndices.end(),
+                        [&noteNumbers](int a, int b)
+                        {
+                            return noteNumbers[(size_t)a] < noteNumbers[(size_t)b];
+                        });
+                }
+
+                std::vector<int> usedOutputNotes;
+
+                for (int rank = 0; rank < static_cast<int>(selectedIndices.size()); ++rank)
+                {
+                    const int selectedIndex = selectedIndices[(size_t)rank];
+
+                    if (selectedIndex < 0
+                        || selectedIndex >= static_cast<int>(groupNotes.size()))
+                    {
+                        continue;
+                    }
+
+                    const auto& selected = groupNotes[(size_t)selectedIndex];
+
+                    VoiceSourceRange range;
+
+                    if (currentProfile.registerWrapMode == RegisterWrapMode::PerVoiceRange)
+                    {
+                        range = getVoiceSourceRangeForProfileRank(currentProfile,
+                            rank,
+                            static_cast<int>(selectedIndices.size()));
+                    }
+                    else
+                    {
+                        range = {
+                            rank,
+                            currentProfile.minNote,
+                            currentProfile.maxNote,
+                            currentProfile.targetNote,
+                            currentProfile.outputTranspose
+                        };
+                    }
+
+                    int outputNote = wrapNoteNearTarget(selected.inputNote,
+                        range.minNote,
+                        range.maxNote,
+                        range.targetNote);
+
+                    outputNote = applyOutputTranspose(outputNote,
+                        range.outputTranspose);
+
+                    if (std::find(usedOutputNotes.begin(),
+                        usedOutputNotes.end(),
+                        outputNote) != usedOutputNotes.end())
+                    {
+                        const int up = outputNote + 12;
+                        const int down = outputNote - 12;
+
+                        if (up <= range.maxNote
+                            && std::find(usedOutputNotes.begin(),
+                                usedOutputNotes.end(),
+                                up) == usedOutputNotes.end())
+                        {
+                            outputNote = up;
+                        }
+                        else if (down >= range.minNote
+                            && std::find(usedOutputNotes.begin(),
+                                usedOutputNotes.end(),
+                                down) == usedOutputNotes.end())
+                        {
+                            outputNote = down;
+                        }
+                    }
+
+                    if (std::find(usedOutputNotes.begin(),
+                        usedOutputNotes.end(),
+                        outputNote) != usedOutputNotes.end())
+                    {
+                        continue;
+                    }
+
+                    usedOutputNotes.push_back(outputNote);
+
+                    scheduleNotePair(selected.channel,
+                        outputNote,
+                        selected.velocity,
+                        selected.startPpq,
+                        selected.endPpq);
+                }
+            }
+        }
+    }
+
+    std::sort(scheduledLookaheadEvents.begin(), scheduledLookaheadEvents.end(),
+        [](const ScheduledMidiEvent& a, const ScheduledMidiEvent& b)
+        {
+            if (a.targetPpq == b.targetPpq)
+            {
+                // Controllers first, so CC31 preset changes arrive before notes.
+                if (a.message.isController() && !b.message.isController())
+                    return true;
+
+                if (!a.message.isController() && b.message.isController())
+                    return false;
+
+                // Then note-offs before note-ons, to avoid retrigger/hanging issues.
+                if (a.message.isNoteOff() && b.message.isNoteOn())
+                    return true;
+
+                if (a.message.isNoteOn() && b.message.isNoteOff())
+                    return false;
+            }
+
+            return a.targetPpq < b.targetPpq;
+        });
+}
+
+void DivisiCleanAudioProcessor::emitScheduledEventsForBlock(juce::MidiBuffer& outputMidi,
+    double blockStartPpq,
+    double blockEndPpq,
+    int numSamples)
+{
+    if (numSamples <= 0)
+        return;
+
+    if (blockEndPpq <= blockStartPpq)
+        return;
+
+    constexpr double ppqEpsilon = 0.0001;
+
+    std::vector<ScheduledMidiEvent> remainingEvents;
+    remainingEvents.reserve(scheduledLookaheadEvents.size());
+
+    for (const auto& event : scheduledLookaheadEvents)
+    {
+        // Future event: keep it.
+        if (event.targetPpq > blockEndPpq + ppqEpsilon)
+        {
+            remainingEvents.push_back(event);
+            continue;
+        }
+
+        int samplePosition = 0;
+
+        // Overdue or exactly at block start: emit immediately.
+        if (event.targetPpq <= blockStartPpq + ppqEpsilon)
+        {
+            samplePosition = 0;
+        }
+        else
+        {
+            const double ratio =
+                (event.targetPpq - blockStartPpq) / (blockEndPpq - blockStartPpq);
+
+            samplePosition = juce::jlimit(0,
+                juce::jmax(0, numSamples - 1),
+                juce::roundToInt(ratio * static_cast<double>(numSamples)));
+        }
+
+        outputMidi.addEvent(event.message, samplePosition);
+    }
+
+    scheduledLookaheadEvents.swap(remainingEvents);
+}
+
+void DivisiCleanAudioProcessor::processBarLookaheadBlock(juce::AudioBuffer<float>& buffer,
+    juce::MidiBuffer& midiMessages)
+{
+    buffer.clear();
+
+    juce::MidiBuffer outputMidi;
+
+    if (midiPanicAndResetRequested.exchange(false))
+    {
+        addMidiPanicMessages(outputMidi, 0);
+        resetBarLookaheadState();
+        midiMessages.swapWith(outputMidi);
+        return;
+    }
+
+    double ppq = 0.0;
+    double bpm = 120.0;
+    double numerator = 4.0;
+    double denominator = 4.0;
+    bool isPlaying = false;
+
+    const bool hasTransport = getTransportPpqInfo(ppq, bpm, numerator, denominator, isPlaying);
+
+    if (!hasTransport || !isPlaying)
+    {
+        if (engineSettings.resetOnTransportStop && lastTransportPlaying)
+        {
+            addMidiPanicMessages(outputMidi, 0);
+            resetBarLookaheadState();
+        }
+
+        lastTransportPlaying = isPlaying;
+
+        // While stopped, pass MIDI through so manual/controller input still works.
+        // CC31 still updates DivisiClean's internal GUI/profile state.
+        //
+        // Important:
+        // When stopped, there is no BarLookahead timeline to align against,
+        // so passing CC31 through immediately is acceptable and useful.
+        for (const auto metadata : midiMessages)
+        {
+            const auto message = metadata.getMessage();
+
+            if (message.isController() && message.getControllerNumber() == 31)
+                activeCC31.store(message.getControllerValue());
+
+            outputMidi.addEvent(message, metadata.samplePosition);
+        }
+
+        midiMessages.swapWith(outputMidi);
+        return;
+    }
+
+    const double barLengthBeats = getBarLengthBeats(numerator, denominator);
+    const double blockStartPpq = ppq;
+
+    const double beatsPerSecond = bpm / 60.0;
+    const double blockDurationSeconds =
+        static_cast<double>(buffer.getNumSamples()) / getSampleRate();
+
+    const double blockLengthBeats = beatsPerSecond * blockDurationSeconds;
+    const double blockEndPpq = blockStartPpq + blockLengthBeats;
+
+    const double currentBarStart = getBarStartPpq(blockStartPpq, barLengthBeats);
+
+    if (activeBarStartPpq < 0.0)
+        activeBarStartPpq = currentBarStart;
+
+    const bool jumpedBack =
+        lastSeenPpq >= 0.0
+        && blockStartPpq + 0.0001 < lastSeenPpq;
+
+    if (jumpedBack && engineSettings.resetOnLoopJump)
+    {
+        addMidiPanicMessages(outputMidi, 0);
+        resetBarLookaheadState();
+        activeBarStartPpq = currentBarStart;
+    }
+
+    while (activeBarStartPpq + barLengthBeats <= currentBarStart)
+    {
+        finaliseCompletedBar(activeBarStartPpq, barLengthBeats);
+        activeBarStartPpq += barLengthBeats;
+    }
+
+    emitScheduledEventsForBlock(outputMidi,
+        blockStartPpq,
+        blockEndPpq,
+        buffer.getNumSamples());
+
+    for (const auto metadata : midiMessages)
+    {
+        const auto message = metadata.getMessage();
+
+        const double eventRatio =
+            buffer.getNumSamples() > 0
+            ? static_cast<double>(metadata.samplePosition) / static_cast<double>(buffer.getNumSamples())
+            : 0.0;
+
+        const double eventPpq =
+            blockStartPpq + (eventRatio * blockLengthBeats);
+
+        if (message.isController())
+        {
+            if (message.getControllerNumber() == 31)
+            {
+                // In BarLookahead mode, CC31 is part of the delayed musical timeline.
+                //
+                // Do not output it immediately.
+                // Do not panic.
+                // Do not clear scheduled events.
+                //
+                // Instead, update DivisiClean's internal active profile now.
+                // New note-ons captured after this point will be tagged with this CC31.
+                // The matching CC31 will be emitted later by finaliseCompletedBar(),
+                // at the same delayed output bar as the notes that belong to it.
+                activeCC31.store(message.getControllerValue());
+
+                continue;
+            }
+
+            // Other controllers can still pass through immediately.
+            outputMidi.addEvent(message, metadata.samplePosition);
+            continue;
+        }
+
+        if (message.isNoteOn())
+        {
+            barInputNotes.push_back(
+                {
+                    message.getChannel(),
+                    message.getNoteNumber(),
+                    static_cast<int>(message.getVelocity()),
+                    eventPpq,
+                    eventPpq,
+                    false,
+                    activeCC31.load()
+                });
+
+            continue;
+        }
+
+        if (message.isNoteOff())
+        {
+            for (auto it = barInputNotes.rbegin(); it != barInputNotes.rend(); ++it)
+            {
+                if (it->channel == message.getChannel()
+                    && it->inputNote == message.getNoteNumber()
+                    && !it->hasEnd)
+                {
+                    it->endPpq = eventPpq;
+                    it->hasEnd = true;
+                    break;
+                }
+            }
+
+            continue;
+        }
+
+        // Non-note MIDI passes through.
+        outputMidi.addEvent(message, metadata.samplePosition);
+    }
+
+    lastSeenPpq = blockStartPpq;
+    lastTransportPlaying = isPlaying;
+
+    midiMessages.swapWith(outputMidi);
 }
 
 void DivisiCleanAudioProcessor::reloadJsonProfilesFromGui()
@@ -389,8 +1102,7 @@ void DivisiCleanAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
 
 void DivisiCleanAudioProcessor::releaseResources()
 {
-    pendingNotes.clear();
-    activeNoteMap.fill(-1);
+    resetBarLookaheadState();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -419,6 +1131,66 @@ bool DivisiCleanAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 }
 #endif
 
+juce::String DivisiCleanAudioProcessor::getBarLookaheadDebugText() const
+{
+    if (scheduledLookaheadEvents.empty())
+        return "Sched PPQ: none";
+
+    double minPpq = scheduledLookaheadEvents.front().targetPpq;
+    double maxPpq = scheduledLookaheadEvents.front().targetPpq;
+
+    for (const auto& event : scheduledLookaheadEvents)
+    {
+        minPpq = std::min(minPpq, event.targetPpq);
+        maxPpq = std::max(maxPpq, event.targetPpq);
+    }
+
+    return "Sched PPQ: "
+        + juce::String(minPpq, 3)
+        + " - "
+        + juce::String(maxPpq, 3)
+        + " | Last PPQ: "
+        + juce::String(lastSeenPpq, 3);
+}
+
+juce::String DivisiCleanAudioProcessor::getEngineTimingModeName() const
+{
+    switch (engineSettings.timingMode)
+    {
+    case TimingMode::BarLookahead:
+        return "BarLookahead";
+
+    case TimingMode::ChordWindow:
+    default:
+        return "ChordWindow";
+    }
+}
+
+juce::String DivisiCleanAudioProcessor::getEngineStatusText() const
+{
+    if (engineSettings.enabled
+        && engineSettings.timingMode == TimingMode::BarLookahead)
+    {
+        return "Engine: BarLookahead | Grid: 1/"
+            + juce::String(engineSettings.quantizeDivisionsPerBar)
+            + " bar | Delay: "
+            + juce::String(engineSettings.outputDelayBars, 1)
+            + " bar";
+    }
+
+    return "Engine: ChordWindow";
+}
+
+int DivisiCleanAudioProcessor::getBarLookaheadBufferedNoteCount() const
+{
+    return static_cast<int>(barInputNotes.size());
+}
+
+int DivisiCleanAudioProcessor::getBarLookaheadScheduledEventCount() const
+{
+    return static_cast<int>(scheduledLookaheadEvents.size());
+}
+
 void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     juce::MidiBuffer& midiMessages)
 {
@@ -426,6 +1198,13 @@ void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
     // This plugin produces no audio.
     buffer.clear();
+
+    if (engineSettings.enabled
+        && engineSettings.timingMode == TimingMode::BarLookahead)
+    {
+        processBarLookaheadBlock(buffer, midiMessages);
+        return;
+    }
 
     juce::MidiBuffer processedBuffer;
 
@@ -435,6 +1214,7 @@ void DivisiCleanAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
         pendingNotes.clear();
         activeNoteMap.fill(-1);
+        resetBarLookaheadState();
     }
 
     const double blockMs = samplesToMs(buffer.getNumSamples());

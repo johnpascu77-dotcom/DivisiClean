@@ -4,7 +4,7 @@
 DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
-    setSize(560, 395);
+    setSize(560, 425);
 
     titleLabel.setText("DivisiClean", juce::dontSendNotification);
     titleLabel.setJustificationType(juce::Justification::centred);
@@ -41,6 +41,11 @@ DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudi
     wrapModeLabel.setFont(juce::FontOptions(15.0f));
     addAndMakeVisible(wrapModeLabel);
 
+    engineStatusLabel.setText("Engine: -", juce::dontSendNotification);
+    engineStatusLabel.setJustificationType(juce::Justification::centred);
+    engineStatusLabel.setFont(juce::FontOptions(15.0f));
+    addAndMakeVisible(engineStatusLabel);
+
     settingsLabel.setText("Max voices: - | Window: - | Cap: -", juce::dontSendNotification);
     settingsLabel.setJustificationType(juce::Justification::centred);
     settingsLabel.setFont(juce::FontOptions(15.0f));
@@ -54,6 +59,19 @@ DivisiCleanAudioProcessorEditor::DivisiCleanAudioProcessorEditor(DivisiCleanAudi
     jsonStatusLabel.setJustificationType(juce::Justification::centred);
     jsonStatusLabel.setFont(juce::FontOptions(13.0f));
     addAndMakeVisible(jsonStatusLabel);
+
+    jsonStatusLabel.setText(
+        "JSON: " + audioProcessor.getJsonProfileStatus(),
+        juce::dontSendNotification
+    );
+
+    reloadJsonButton.setButtonText("Reload JSON + Panic");
+    reloadJsonButton.setTooltip("Reloads JSON profiles and sends MIDI panic/reset at the next processing block. Best used while transport is stopped.");
+    reloadJsonButton.onClick = [this]()
+        {
+            audioProcessor.reloadJsonProfilesFromGui();
+        };
+    addAndMakeVisible(reloadJsonButton);
 
     startTimerHz(10);
 }
@@ -95,6 +113,7 @@ void DivisiCleanAudioProcessorEditor::resized()
     reductionModeLabel.setBounds(area.removeFromTop(26));
     divisiModeLabel.setBounds(area.removeFromTop(26));
     wrapModeLabel.setBounds(area.removeFromTop(26));
+    engineStatusLabel.setBounds(area.removeFromTop(26));
     settingsLabel.setBounds(area.removeFromTop(26));
     pendingLabel.setBounds(area.removeFromTop(26));
     jsonStatusLabel.setBounds(area.removeFromTop(24));
@@ -136,6 +155,9 @@ void DivisiCleanAudioProcessorEditor::timerCallback()
     wrapModeLabel.setText("Wrap: " + audioProcessor.getActiveRegisterWrapModeName(),
         juce::dontSendNotification);
 
+    engineStatusLabel.setText(audioProcessor.getEngineStatusText(),
+    juce::dontSendNotification);
+
     settingsLabel.setText(
         "Max voices: " + juce::String(audioProcessor.getActiveProfileMaxVoices())
         + " | Window: " + windowText
@@ -143,21 +165,21 @@ void DivisiCleanAudioProcessorEditor::timerCallback()
         juce::dontSendNotification
     );
 
-    pendingLabel.setText(
-        "Pending notes: " + juce::String(audioProcessor.getPendingNoteCount()),
-        juce::dontSendNotification
-    );
-
-    jsonStatusLabel.setText(
-        "JSON: " + audioProcessor.getJsonProfileStatus(),
-        juce::dontSendNotification
-    );
-
-    reloadJsonButton.setButtonText("Reload JSON + Panic");
-    reloadJsonButton.setTooltip("Reloads JSON profiles and sends MIDI panic/reset at the next processing block. Best used while transport is stopped.");
-    reloadJsonButton.onClick = [this]()
-        {
-            audioProcessor.reloadJsonProfilesFromGui();
-        };
-    addAndMakeVisible(reloadJsonButton);
+    if (audioProcessor.getEngineTimingModeName() == "BarLookahead")
+    {
+        pendingLabel.setText(
+            "Buffered notes: " + juce::String(audioProcessor.getBarLookaheadBufferedNoteCount())
+            + " | Scheduled events: " + juce::String(audioProcessor.getBarLookaheadScheduledEventCount()),
+            juce::dontSendNotification
+        );
+    }
+    else
+    {
+        pendingLabel.setText(
+            "Buffered notes: " + juce::String(audioProcessor.getBarLookaheadBufferedNoteCount())
+            + " | Scheduled events: " + juce::String(audioProcessor.getBarLookaheadScheduledEventCount())
+            + " | " + audioProcessor.getBarLookaheadDebugText(),
+            juce::dontSendNotification
+        );
+    }
 }
