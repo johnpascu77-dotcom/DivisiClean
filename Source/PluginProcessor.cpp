@@ -54,6 +54,7 @@ DivisiCleanAudioProcessor::DivisiCleanAudioProcessor()
 
     activeNoteMap.fill(-1);
 
+    ensureRuntimeJsonProfilesExist();
     loadJsonProfiles();
 
 }
@@ -107,6 +108,68 @@ juce::String DivisiCleanAudioProcessor::getJsonProfilesFileNameForCurrentMode() 
 }
 
 
+
+void DivisiCleanAudioProcessor::ensureRuntimeJsonProfilesExist()
+{
+    const auto runtimeProfilesDir = getRuntimeProfilesDirectory();
+
+    if (! runtimeProfilesDir.exists())
+        runtimeProfilesDir.createDirectory();
+
+    copyFactoryProfileIfMissing("DivisiCleanProfiles_ChordWindow.json");
+    copyFactoryProfileIfMissing("DivisiCleanProfiles_BarLookahead.json");
+    copyFactoryProfileIfMissing("DivisiCleanProfiles_GeneratedMidi.json");
+    copyFactoryProfileIfMissing("DivisiCleanProfiles_ArpDriver.json");
+    copyFactoryProfileIfMissing("DivisiCleanProfiles.json");
+}
+
+juce::File DivisiCleanAudioProcessor::getRuntimeProfilesDirectory() const
+{
+    return juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
+        .getChildFile("DivisiClean")
+        .getChildFile("Profiles");
+}
+
+juce::File DivisiCleanAudioProcessor::getFactoryProfilesDirectory() const
+{
+    auto dir = juce::File::getSpecialLocation(juce::File::currentExecutableFile).getParentDirectory();
+
+    for (int i = 0; i < 8; ++i)
+    {
+        const auto candidate = dir.getChildFile("Resources").getChildFile("Profiles");
+
+        if (candidate.isDirectory())
+            return candidate;
+
+        const auto parent = dir.getParentDirectory();
+
+        if (parent == dir)
+            break;
+
+        dir = parent;
+    }
+
+    return juce::File::getSpecialLocation(juce::File::currentExecutableFile)
+        .getParentDirectory()
+        .getChildFile("Resources")
+        .getChildFile("Profiles");
+}
+
+bool DivisiCleanAudioProcessor::copyFactoryProfileIfMissing(const juce::String& fileName)
+{
+    const auto runtimeFile = getRuntimeProfilesDirectory().getChildFile(fileName);
+
+    if (runtimeFile.existsAsFile())
+        return true;
+
+    const auto factoryFile = getFactoryProfilesDirectory().getChildFile(fileName);
+
+    if (! factoryFile.existsAsFile())
+        return false;
+
+    runtimeFile.getParentDirectory().createDirectory();
+    return factoryFile.copyFileTo(runtimeFile);
+}
 
 juce::File DivisiCleanAudioProcessor::getJsonProfilesFile() const
 

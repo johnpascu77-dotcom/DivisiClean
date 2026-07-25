@@ -146,6 +146,11 @@ public:
     void loadJsonProfiles();
     void reloadJsonProfilesFromGui();
     juce::String getJsonProfilesFileNameForCurrentMode() const;
+
+    void ensureRuntimeJsonProfilesExist();
+    juce::File getRuntimeProfilesDirectory() const;
+    juce::File getFactoryProfilesDirectory() const;
+    bool copyFactoryProfileIfMissing(const juce::String& fileName);
     juce::File getJsonProfilesFile() const;
 
     void requestMidiPanicAndStateReset();
