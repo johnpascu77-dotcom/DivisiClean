@@ -16,9 +16,9 @@ BEGIN
   BEGIN
     BLOCK "040904E4"
     BEGIN
-      VALUE "FileDescription",  "DivisiClean\0"
+      VALUE "FileDescription",  "DivisiClean Lab\0"
       VALUE "FileVersion",  "1.0.0\0"
-      VALUE "ProductName",  "DivisiClean\0"
+      VALUE "ProductName",  "DivisiClean Lab\0"
       VALUE "ProductVersion",  "1.0.0\0"
     END
   END

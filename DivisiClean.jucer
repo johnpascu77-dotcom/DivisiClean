@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mKy5NC" name="DivisiClean Lab" projectType="audioplug" useAppConfig="0"
+<JUCERPROJECT id="mKy5NC" name="DivisiClean Lab" pluginName="DivisiClean Lab" pluginDesc="DivisiClean Lab" pluginManufacturer="DivisiClean" pluginManufacturerCode="DvCl" pluginCode="DvLb" bundleIdentifier="com.divisiclean.lab" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
   <MAINGROUP id="DIhfgA" name="DivisiClean Lab">
