@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mKy5NC" name="DivisiClean" projectType="audioplug" useAppConfig="0"
+<JUCERPROJECT id="mKy5NC" name="DivisiClean Lab" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
-  <MAINGROUP id="DIhfgA" name="DivisiClean">
+  <MAINGROUP id="DIhfgA" name="DivisiClean Lab">
     <GROUP id="{1DD4E300-6D76-0696-5A43-6335B1260276}" name="Source">
       <FILE id="NH6Fw2" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
@@ -35,8 +35,8 @@
   <EXPORTFORMATS>
     <VS2026 targetFolder="Builds/VisualStudio2026">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="DivisiClean"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="DivisiClean"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="DivisiClean Lab"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="DivisiClean Lab"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../../../../../JUCE/JUCE/modules"/>
