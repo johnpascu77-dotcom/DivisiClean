@@ -725,6 +725,71 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
             return true;
         };
 
+    const auto isOneOfNormalised = [this](const juce::String& value,
+        std::initializer_list<const char*> allowedValues)
+        {
+            const auto normalised = normaliseEnumText(value);
+
+            for (const auto* allowedValue : allowedValues)
+            {
+                if (normalised == allowedValue)
+                    return true;
+            }
+
+            return false;
+        };
+
+
+    const auto validateProfileEnumFields = [&isOneOfNormalised](const juce::DynamicObject& object,
+        juce::String& error)
+        {
+            const auto profileType = object.getProperty("profileType").toString();
+
+            if (!isOneOfNormalised(profileType,
+                { "passthrough", "singlesource", "sectionpoly", "blockvoicing" }))
+            {
+                error = "invalid profileType '" + profileType + "'";
+                return false;
+            }
+
+            const auto sourceSelectionMode = object.getProperty("sourceSelectionMode").toString();
+
+            if (!isOneOfNormalised(sourceSelectionMode,
+                { "highest", "lowest", "closesttotarget" }))
+            {
+                error = "invalid sourceSelectionMode '" + sourceSelectionMode + "'";
+                return false;
+            }
+
+            const auto sourceReductionMode = object.getProperty("sourceReductionMode").toString();
+
+            if (!isOneOfNormalised(sourceReductionMode,
+                { "none", "lowestn", "highestn", "spread", "closesttotarget", "asplayed" }))
+            {
+                error = "invalid sourceReductionMode '" + sourceReductionMode + "'";
+                return false;
+            }
+
+            const auto expectedDivisiMode = object.getProperty("expectedDivisiMode").toString();
+
+            if (!isOneOfNormalised(expectedDivisiMode,
+                { "none", "bottomup", "topdown", "fillvoices" }))
+            {
+                error = "invalid expectedDivisiMode '" + expectedDivisiMode + "'";
+                return false;
+            }
+
+            const auto registerWrapMode = object.getProperty("registerWrapMode").toString();
+
+            if (!isOneOfNormalised(registerWrapMode,
+                { "pernoteneartarget", "pervoicerange" }))
+            {
+                error = "invalid registerWrapMode '" + registerWrapMode + "'";
+                return false;
+            }
+
+            return true;
+        };
 
 
     for (int profileIndex = 0; profileIndex < profilesArray->size(); ++profileIndex)
@@ -756,6 +821,13 @@ void DivisiCleanAudioProcessor::loadJsonProfiles()
         juce::String validationError;
 
         if (!validateRequiredProfileFields(*profileObject, validationError))
+        {
+            ++skippedProfileCount;
+            addValidationWarning("profile[" + juce::String(profileIndex) + "] " + validationError);
+            continue;
+        }
+
+        if (!validateProfileEnumFields(*profileObject, validationError))
         {
             ++skippedProfileCount;
             addValidationWarning("profile[" + juce::String(profileIndex) + "] " + validationError);
